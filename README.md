@@ -6,7 +6,7 @@ This repo contains a hand-weighted tiny transformer for autoregressive 10-digit 
 
 Current headline artifact:
 
-- `param_343.py`: original standalone hand-weighted transformer (`343` params)
+- `param_343.py`: original standalone hand-weighted transformer (`343` params) (from @N8programs on X - [link to gist](https://gist.github.com/N8python/02e41d156ec615328cde2e1e5c0e9d53).
 - `param_188.py`: standalone exact-compressed transformer (`188` params)
 
 `param_188.py` is not a retrained model and does not change task semantics. It preserves the same autoregressive transformer behavior and was validated with the local harness.
