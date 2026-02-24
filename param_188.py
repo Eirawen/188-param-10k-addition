@@ -16,7 +16,7 @@ This file preserves the same harness contract as `param_343.py`.
 
 
 """
-Special thanks to @N8programs and @xangma for their work which facilitated this.
+Special thanks to @N8programs and @xangma on X for their work which facilitated this.
 """
 
 import argparse
