@@ -1,0 +1,1785 @@
+{
+  "started_utc": "2026-02-24T21:40:21Z",
+  "conda_env": "param343-addition-wsl",
+  "experiments": [
+    {
+      "exp_id": 38,
+      "module": "param_candidate_exp38_rank1_major_linears_baseline",
+      "family": "baseline",
+      "expected_params": 259,
+      "source_compare": "param_343",
+      "milestone": false,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp38_rank1_major_linears_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 0,
+          "stdout": "{\"buffer_count\": 0, \"lm_head_rank32\": 3, \"lm_head_rank64\": 5, \"meta\": {\"rank1_major_linears_residuals\": {\"layers.0.mlp.down_proj\": 0.0, \"layers.0.mlp.up_proj\": 0.0, \"layers.0.self_attn.k_proj\": 0.0, \"layers.0.self_attn.o_proj\": 0.0, \"layers.0.self_attn.q_proj\": 0.0, \"layers.0.self_attn.v_proj\": 0.0, \"layers.1.mlp.down_proj\": 0.0, \"layers.1.mlp.up_proj\": 0.0, \"layers.1.self_attn.k_proj\": 0.0, \"layers.1.self_attn.o_proj\": 0.0, \"layers.1.self_attn.q_proj\": 0.0, \"layers.1.self_attn.v_proj\": 0.0}}, \"param_count\": 259}\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 1.6950719356536865,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp38_rank1_major_linears_baseline'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        },
+        {
+          "kind": "equivalence",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--compare-reference-module",
+            "param_343",
+            "--compare-candidate-module",
+            "param_candidate_exp38_rank1_major_linears_baseline",
+            "--compare-num-tests",
+            "10000",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_equiv.json"
+          ],
+          "returncode": 0,
+          "stdout": "equivalence progress: 4096/10000\nequivalence progress: 8192/10000\nequivalence progress: 10000/10000\nequivalence passed (10000 cases, seed 123456789): param_candidate_exp38_rank1_major_linears_baseline == param_343\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 5.086696624755859,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp38_rank1_major_linears_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_equiv.json"
+        },
+        {
+          "kind": "structured",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp38_rank1_major_linears_baseline",
+            "--oracle-module",
+            "param_343",
+            "--structured-suite",
+            "--num-tests",
+            "0",
+            "--expected-param-count",
+            "259",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_structured.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 259\nparameter breakdown (top 20 by size):\n  embed_tokens.weight: 50 (10, 5)\n  lm_head.weight: 50 (10, 5)\n  layers.0.mlp.gate_proj.weight: 15 (3, 5)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  layers.0.input_layernorm.weight: 5 (5,)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.post_attention_layernorm.weight: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.input_layernorm.weight: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.post_attention_layernorm.weight: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\nbuffer count (named_buffers): 0\nstructured suite: smoke passed (10 cases)\nstructured suite: power-boundaries passed (48 cases)\nstructured suite: carry-chains passed (65 cases)\nstructured suite: position-digit-sweep passed (1000 cases)\nstructured suite: no-carry-random passed (50000 cases)\nstructured suite: heavy-carry-random passed (50000 cases)\nstructured suite passed (101123 total cases)\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 21.845665454864502,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp38_rank1_major_linears_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 259 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_structured.json"
+        },
+        {
+          "kind": "random_100k",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp38_rank1_major_linears_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "259",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc100k.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 259\nparameter breakdown (top 20 by size):\n  embed_tokens.weight: 50 (10, 5)\n  lm_head.weight: 50 (10, 5)\n  layers.0.mlp.gate_proj.weight: 15 (3, 5)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  layers.0.input_layernorm.weight: 5 (5,)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.post_attention_layernorm.weight: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.input_layernorm.weight: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.post_attention_layernorm.weight: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 21.44483757019043,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp38_rank1_major_linears_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 259 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc100k.json"
+        },
+        {
+          "kind": "random_1m",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp38_rank1_major_linears_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "1000000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "259",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc1m.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 259\nparameter breakdown (top 20 by size):\n  embed_tokens.weight: 50 (10, 5)\n  lm_head.weight: 50 (10, 5)\n  layers.0.mlp.gate_proj.weight: 15 (3, 5)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  layers.0.input_layernorm.weight: 5 (5,)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.post_attention_layernorm.weight: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.input_layernorm.weight: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.post_attention_layernorm.weight: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\nbuffer count (named_buffers): 0\naccuracy progress: 102400/1000000\naccuracy progress: 200704/1000000\naccuracy progress: 303104/1000000\naccuracy progress: 401408/1000000\naccuracy progress: 503808/1000000\naccuracy progress: 602112/1000000\naccuracy progress: 700416/1000000\naccuracy progress: 802816/1000000\naccuracy progress: 901120/1000000\naccuracy progress: 1000000/1000000\nrandom accuracy: exact=1000000, mismatches=0, total=1000000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 203.8094449043274,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp38_rank1_major_linears_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 259 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc1m.json"
+        },
+        {
+          "kind": "random_100k_extra",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp38_rank1_major_linears_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "259",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "987654321",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc100k_seed987654321.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 259\nparameter breakdown (top 20 by size):\n  embed_tokens.weight: 50 (10, 5)\n  lm_head.weight: 50 (10, 5)\n  layers.0.mlp.gate_proj.weight: 15 (3, 5)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  layers.0.input_layernorm.weight: 5 (5,)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.post_attention_layernorm.weight: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.input_layernorm.weight: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.post_attention_layernorm.weight: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=987654321\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 19.910733222961426,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp38_rank1_major_linears_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 259 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc100k_seed987654321.json"
+        }
+      ],
+      "build_meta": {
+        "buffer_count": 0,
+        "lm_head_rank32": 3,
+        "lm_head_rank64": 5,
+        "meta": {
+          "rank1_major_linears_residuals": {
+            "layers.0.mlp.down_proj": 0.0,
+            "layers.0.mlp.up_proj": 0.0,
+            "layers.0.self_attn.k_proj": 0.0,
+            "layers.0.self_attn.o_proj": 0.0,
+            "layers.0.self_attn.q_proj": 0.0,
+            "layers.0.self_attn.v_proj": 0.0,
+            "layers.1.mlp.down_proj": 0.0,
+            "layers.1.mlp.up_proj": 0.0,
+            "layers.1.self_attn.k_proj": 0.0,
+            "layers.1.self_attn.o_proj": 0.0,
+            "layers.1.self_attn.q_proj": 0.0,
+            "layers.1.self_attn.v_proj": 0.0
+          }
+        },
+        "param_count": 259
+      },
+      "equivalence": {
+        "status": "pass",
+        "cases": 10000,
+        "seed": 123456789
+      },
+      "structured": {
+        "status": "pass",
+        "total_cases": 101123,
+        "param_count": 259,
+        "buffer_count": 0
+      },
+      "status": "structured_pass",
+      "random_100k": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 259,
+        "buffer_count": 0
+      },
+      "random_1m": {
+        "status": "ok",
+        "exact": 1000000,
+        "mismatches": 0,
+        "total": 1000000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 259,
+        "buffer_count": 0
+      },
+      "random_100k_extra": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 987654321,
+        "param_count": 259,
+        "buffer_count": 0
+      },
+      "new_best_after_validation": 259
+    },
+    {
+      "exp_id": 39,
+      "module": "param_candidate_exp39_fixedscale_rmsnorms_baseline",
+      "family": "baseline",
+      "expected_params": 310,
+      "source_compare": "param_343",
+      "milestone": false,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp39_fixedscale_rmsnorms_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 0,
+          "stdout": "{\"buffer_count\": 0, \"lm_head_rank32\": 3, \"lm_head_rank64\": 5, \"meta\": {\"fixed_scale_rmsnorms\": {\"layers.0.input_layernorm\": 1.0, \"layers.0.post_attention_layernorm\": 1.0, \"layers.0.self_attn.k_norm\": 16.0, \"layers.0.self_attn.q_norm\": 16.0, \"layers.1.input_layernorm\": 1.0, \"layers.1.post_attention_layernorm\": 1.0, \"layers.1.self_attn.k_norm\": 16.0, \"layers.1.self_attn.q_norm\": 16.0, \"norm\": 1.0}}, \"param_count\": 310}\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 1.7545814514160156,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp39_fixedscale_rmsnorms_baseline'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        },
+        {
+          "kind": "equivalence",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--compare-reference-module",
+            "param_343",
+            "--compare-candidate-module",
+            "param_candidate_exp39_fixedscale_rmsnorms_baseline",
+            "--compare-num-tests",
+            "10000",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp39_equiv.json"
+          ],
+          "returncode": 0,
+          "stdout": "equivalence progress: 4096/10000\nequivalence progress: 8192/10000\nequivalence progress: 10000/10000\nequivalence passed (10000 cases, seed 123456789): param_candidate_exp39_fixedscale_rmsnorms_baseline == param_343\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 5.6755993366241455,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp39_fixedscale_rmsnorms_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp39_equiv.json"
+        },
+        {
+          "kind": "structured",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp39_fixedscale_rmsnorms_baseline",
+            "--oracle-module",
+            "param_343",
+            "--structured-suite",
+            "--num-tests",
+            "0",
+            "--expected-param-count",
+            "310",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp39_structured.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 310\nparameter breakdown (top 16 by size):\n  embed_tokens.weight: 50 (10, 5)\n  lm_head.weight: 50 (10, 5)\n  layers.0.self_attn.o_proj.weight: 20 (5, 4)\n  layers.0.self_attn.q_proj.weight: 20 (4, 5)\n  layers.1.self_attn.o_proj.weight: 20 (5, 4)\n  layers.1.self_attn.q_proj.weight: 20 (4, 5)\n  layers.0.mlp.down_proj.weight: 15 (5, 3)\n  layers.0.mlp.gate_proj.weight: 15 (3, 5)\n  layers.0.mlp.up_proj.weight: 15 (3, 5)\n  layers.1.mlp.down_proj.weight: 15 (5, 3)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  layers.1.mlp.up_proj.weight: 15 (3, 5)\n  layers.0.self_attn.k_proj.weight: 10 (2, 5)\n  layers.0.self_attn.v_proj.weight: 10 (2, 5)\n  layers.1.self_attn.k_proj.weight: 10 (2, 5)\n  layers.1.self_attn.v_proj.weight: 10 (2, 5)\nbuffer count (named_buffers): 0\nstructured suite: smoke passed (10 cases)\nstructured suite: power-boundaries passed (48 cases)\nstructured suite: carry-chains passed (65 cases)\nstructured suite: position-digit-sweep passed (1000 cases)\nstructured suite: no-carry-random passed (50000 cases)\nstructured suite: heavy-carry-random passed (50000 cases)\nstructured suite passed (101123 total cases)\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 23.559532165527344,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp39_fixedscale_rmsnorms_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 310 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp39_structured.json"
+        }
+      ],
+      "build_meta": {
+        "buffer_count": 0,
+        "lm_head_rank32": 3,
+        "lm_head_rank64": 5,
+        "meta": {
+          "fixed_scale_rmsnorms": {
+            "layers.0.input_layernorm": 1.0,
+            "layers.0.post_attention_layernorm": 1.0,
+            "layers.0.self_attn.k_norm": 16.0,
+            "layers.0.self_attn.q_norm": 16.0,
+            "layers.1.input_layernorm": 1.0,
+            "layers.1.post_attention_layernorm": 1.0,
+            "layers.1.self_attn.k_norm": 16.0,
+            "layers.1.self_attn.q_norm": 16.0,
+            "norm": 1.0
+          }
+        },
+        "param_count": 310
+      },
+      "equivalence": {
+        "status": "pass",
+        "cases": 10000,
+        "seed": 123456789
+      },
+      "structured": {
+        "status": "pass",
+        "total_cases": 101123,
+        "param_count": 310,
+        "buffer_count": 0
+      },
+      "status": "structured_pass"
+    },
+    {
+      "exp_id": 40,
+      "module": "param_candidate_exp40_factored_embedding_baseline",
+      "family": "baseline",
+      "expected_params": 323,
+      "source_compare": "param_343",
+      "milestone": false,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp40_factored_embedding_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 0,
+          "stdout": "{\"buffer_count\": 0, \"lm_head_rank32\": 3, \"lm_head_rank64\": 5, \"meta\": {\"embedding_rank2_residual\": 0.0}, \"param_count\": 323}\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 1.7019622325897217,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp40_factored_embedding_baseline'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        },
+        {
+          "kind": "equivalence",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--compare-reference-module",
+            "param_343",
+            "--compare-candidate-module",
+            "param_candidate_exp40_factored_embedding_baseline",
+            "--compare-num-tests",
+            "10000",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp40_equiv.json"
+          ],
+          "returncode": 0,
+          "stdout": "equivalence progress: 4096/10000\nequivalence progress: 8192/10000\nequivalence progress: 10000/10000\nequivalence passed (10000 cases, seed 123456789): param_candidate_exp40_factored_embedding_baseline == param_343\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 5.198681354522705,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp40_factored_embedding_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp40_equiv.json"
+        },
+        {
+          "kind": "structured",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp40_factored_embedding_baseline",
+            "--oracle-module",
+            "param_343",
+            "--structured-suite",
+            "--num-tests",
+            "0",
+            "--expected-param-count",
+            "323",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp40_structured.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 323\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.0.self_attn.o_proj.weight: 20 (5, 4)\n  layers.0.self_attn.q_proj.weight: 20 (4, 5)\n  layers.1.self_attn.o_proj.weight: 20 (5, 4)\n  layers.1.self_attn.q_proj.weight: 20 (4, 5)\n  layers.0.mlp.down_proj.weight: 15 (5, 3)\n  layers.0.mlp.gate_proj.weight: 15 (3, 5)\n  layers.0.mlp.up_proj.weight: 15 (3, 5)\n  layers.1.mlp.down_proj.weight: 15 (5, 3)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  layers.1.mlp.up_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.self_attn.k_proj.weight: 10 (2, 5)\n  layers.0.self_attn.v_proj.weight: 10 (2, 5)\n  layers.1.self_attn.k_proj.weight: 10 (2, 5)\n  layers.1.self_attn.v_proj.weight: 10 (2, 5)\n  layers.0.input_layernorm.weight: 5 (5,)\n  layers.0.post_attention_layernorm.weight: 5 (5,)\n  layers.1.input_layernorm.weight: 5 (5,)\nbuffer count (named_buffers): 0\nstructured suite: smoke passed (10 cases)\nstructured suite: power-boundaries passed (48 cases)\nstructured suite: carry-chains passed (65 cases)\nstructured suite: position-digit-sweep passed (1000 cases)\nstructured suite: no-carry-random passed (50000 cases)\nstructured suite: heavy-carry-random passed (50000 cases)\nstructured suite passed (101123 total cases)\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 22.764881134033203,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp40_factored_embedding_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 323 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp40_structured.json"
+        }
+      ],
+      "build_meta": {
+        "buffer_count": 0,
+        "lm_head_rank32": 3,
+        "lm_head_rank64": 5,
+        "meta": {
+          "embedding_rank2_residual": 0.0
+        },
+        "param_count": 323
+      },
+      "equivalence": {
+        "status": "pass",
+        "cases": 10000,
+        "seed": 123456789
+      },
+      "structured": {
+        "status": "pass",
+        "total_cases": 101123,
+        "param_count": 323,
+        "buffer_count": 0
+      },
+      "status": "structured_pass"
+    },
+    {
+      "exp_id": 41,
+      "module": "param_candidate_exp41_sparse_gate0_baseline",
+      "family": "baseline",
+      "expected_params": 334,
+      "source_compare": "param_343",
+      "milestone": false,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp41_sparse_gate0_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 0,
+          "stdout": "{\"buffer_count\": 0, \"lm_head_rank32\": 3, \"lm_head_rank64\": 5, \"meta\": {\"sparse_gate0\": {\"kind\": \"baseline\", \"stored_shape\": [2, 3]}}, \"param_count\": 334}\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 1.7266638278961182,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp41_sparse_gate0_baseline'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        },
+        {
+          "kind": "equivalence",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--compare-reference-module",
+            "param_343",
+            "--compare-candidate-module",
+            "param_candidate_exp41_sparse_gate0_baseline",
+            "--compare-num-tests",
+            "10000",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp41_equiv.json"
+          ],
+          "returncode": 0,
+          "stdout": "equivalence progress: 4096/10000\nequivalence progress: 8192/10000\nequivalence progress: 10000/10000\nequivalence passed (10000 cases, seed 123456789): param_candidate_exp41_sparse_gate0_baseline == param_343\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 5.909852027893066,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp41_sparse_gate0_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp41_equiv.json"
+        },
+        {
+          "kind": "structured",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp41_sparse_gate0_baseline",
+            "--oracle-module",
+            "param_343",
+            "--structured-suite",
+            "--num-tests",
+            "0",
+            "--expected-param-count",
+            "334",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp41_structured.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 334\nparameter breakdown (top 20 by size):\n  embed_tokens.weight: 50 (10, 5)\n  lm_head.weight: 50 (10, 5)\n  layers.0.self_attn.o_proj.weight: 20 (5, 4)\n  layers.0.self_attn.q_proj.weight: 20 (4, 5)\n  layers.1.self_attn.o_proj.weight: 20 (5, 4)\n  layers.1.self_attn.q_proj.weight: 20 (4, 5)\n  layers.0.mlp.down_proj.weight: 15 (5, 3)\n  layers.0.mlp.up_proj.weight: 15 (3, 5)\n  layers.1.mlp.down_proj.weight: 15 (5, 3)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  layers.1.mlp.up_proj.weight: 15 (3, 5)\n  layers.0.self_attn.k_proj.weight: 10 (2, 5)\n  layers.0.self_attn.v_proj.weight: 10 (2, 5)\n  layers.1.self_attn.k_proj.weight: 10 (2, 5)\n  layers.1.self_attn.v_proj.weight: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.input_layernorm.weight: 5 (5,)\n  layers.0.post_attention_layernorm.weight: 5 (5,)\n  layers.1.input_layernorm.weight: 5 (5,)\n  layers.1.post_attention_layernorm.weight: 5 (5,)\nbuffer count (named_buffers): 0\nstructured suite: smoke passed (10 cases)\nstructured suite: power-boundaries passed (48 cases)\nstructured suite: carry-chains passed (65 cases)\nstructured suite: position-digit-sweep passed (1000 cases)\nstructured suite: no-carry-random passed (50000 cases)\nstructured suite: heavy-carry-random passed (50000 cases)\nstructured suite passed (101123 total cases)\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 24.42993474006653,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp41_sparse_gate0_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 334 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp41_structured.json"
+        }
+      ],
+      "build_meta": {
+        "buffer_count": 0,
+        "lm_head_rank32": 3,
+        "lm_head_rank64": 5,
+        "meta": {
+          "sparse_gate0": {
+            "kind": "baseline",
+            "stored_shape": [
+              2,
+              3
+            ]
+          }
+        },
+        "param_count": 334
+      },
+      "equivalence": {
+        "status": "pass",
+        "cases": 10000,
+        "seed": 123456789
+      },
+      "structured": {
+        "status": "pass",
+        "total_cases": 101123,
+        "param_count": 334,
+        "buffer_count": 0
+      },
+      "status": "structured_pass"
+    },
+    {
+      "exp_id": 42,
+      "module": "param_candidate_exp42_mlx197_repro_baseline",
+      "family": "baseline",
+      "expected_params": 197,
+      "source_compare": "param_343",
+      "milestone": true,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp42_mlx197_repro_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 0,
+          "stdout": "{\"buffer_count\": 0, \"lm_head_rank32\": 3, \"lm_head_rank64\": 5, \"meta\": {\"embedding_rank2_residual\": 0.0, \"fixed_scale_rmsnorms\": {\"layers.0.input_layernorm\": 1.0, \"layers.0.post_attention_layernorm\": 1.0, \"layers.0.self_attn.k_norm\": 16.0, \"layers.0.self_attn.q_norm\": 16.0, \"layers.1.input_layernorm\": 1.0, \"layers.1.post_attention_layernorm\": 1.0, \"layers.1.self_attn.k_norm\": 16.0, \"layers.1.self_attn.q_norm\": 16.0, \"norm\": 1.0}, \"rank1_major_linears_residuals\": {\"layers.0.mlp.down_proj\": 0.0, \"layers.0.mlp.up_proj\": 0.0, \"layers.0.self_attn.k_proj\": 0.0, \"layers.0.self_attn.o_proj\": 0.0, \"layers.0.self_attn.q_proj\": 0.0, \"layers.0.self_attn.v_proj\": 0.0, \"layers.1.mlp.down_proj\": 0.0, \"layers.1.mlp.up_proj\": 0.0, \"layers.1.self_attn.k_proj\": 0.0, \"layers.1.self_attn.o_proj\": 0.0, \"layers.1.self_attn.q_proj\": 0.0, \"layers.1.self_attn.v_proj\": 0.0}, \"sparse_gate0\": {\"kind\": \"baseline\", \"stored_shape\": [2, 3]}}, \"param_count\": 197}\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 1.7816944122314453,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp42_mlx197_repro_baseline'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        },
+        {
+          "kind": "equivalence",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--compare-reference-module",
+            "param_343",
+            "--compare-candidate-module",
+            "param_candidate_exp42_mlx197_repro_baseline",
+            "--compare-num-tests",
+            "10000",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_equiv.json"
+          ],
+          "returncode": 0,
+          "stdout": "equivalence progress: 4096/10000\nequivalence progress: 8192/10000\nequivalence progress: 10000/10000\nequivalence passed (10000 cases, seed 123456789): param_candidate_exp42_mlx197_repro_baseline == param_343\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 5.816843509674072,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp42_mlx197_repro_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_equiv.json"
+        },
+        {
+          "kind": "structured",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp42_mlx197_repro_baseline",
+            "--oracle-module",
+            "param_343",
+            "--structured-suite",
+            "--num-tests",
+            "0",
+            "--expected-param-count",
+            "197",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_structured.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 197\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\nbuffer count (named_buffers): 0\nstructured suite: smoke passed (10 cases)\nstructured suite: power-boundaries passed (48 cases)\nstructured suite: carry-chains passed (65 cases)\nstructured suite: position-digit-sweep passed (1000 cases)\nstructured suite: no-carry-random passed (50000 cases)\nstructured suite: heavy-carry-random passed (50000 cases)\nstructured suite passed (101123 total cases)\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 23.227692127227783,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp42_mlx197_repro_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 197 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_structured.json"
+        },
+        {
+          "kind": "random_100k",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp42_mlx197_repro_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "197",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc100k.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 197\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 19.864324808120728,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp42_mlx197_repro_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 197 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc100k.json"
+        },
+        {
+          "kind": "random_1m",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp42_mlx197_repro_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "1000000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "197",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc1m.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 197\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 102400/1000000\naccuracy progress: 200704/1000000\naccuracy progress: 303104/1000000\naccuracy progress: 401408/1000000\naccuracy progress: 503808/1000000\naccuracy progress: 602112/1000000\naccuracy progress: 700416/1000000\naccuracy progress: 802816/1000000\naccuracy progress: 901120/1000000\naccuracy progress: 1000000/1000000\nrandom accuracy: exact=1000000, mismatches=0, total=1000000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 197.4053020477295,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp42_mlx197_repro_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 197 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc1m.json"
+        },
+        {
+          "kind": "random_100k_extra",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp42_mlx197_repro_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "197",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "987654321",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc100k_seed987654321.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 197\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=987654321\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 22.92275881767273,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp42_mlx197_repro_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 197 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc100k_seed987654321.json"
+        }
+      ],
+      "build_meta": {
+        "buffer_count": 0,
+        "lm_head_rank32": 3,
+        "lm_head_rank64": 5,
+        "meta": {
+          "embedding_rank2_residual": 0.0,
+          "fixed_scale_rmsnorms": {
+            "layers.0.input_layernorm": 1.0,
+            "layers.0.post_attention_layernorm": 1.0,
+            "layers.0.self_attn.k_norm": 16.0,
+            "layers.0.self_attn.q_norm": 16.0,
+            "layers.1.input_layernorm": 1.0,
+            "layers.1.post_attention_layernorm": 1.0,
+            "layers.1.self_attn.k_norm": 16.0,
+            "layers.1.self_attn.q_norm": 16.0,
+            "norm": 1.0
+          },
+          "rank1_major_linears_residuals": {
+            "layers.0.mlp.down_proj": 0.0,
+            "layers.0.mlp.up_proj": 0.0,
+            "layers.0.self_attn.k_proj": 0.0,
+            "layers.0.self_attn.o_proj": 0.0,
+            "layers.0.self_attn.q_proj": 0.0,
+            "layers.0.self_attn.v_proj": 0.0,
+            "layers.1.mlp.down_proj": 0.0,
+            "layers.1.mlp.up_proj": 0.0,
+            "layers.1.self_attn.k_proj": 0.0,
+            "layers.1.self_attn.o_proj": 0.0,
+            "layers.1.self_attn.q_proj": 0.0,
+            "layers.1.self_attn.v_proj": 0.0
+          },
+          "sparse_gate0": {
+            "kind": "baseline",
+            "stored_shape": [
+              2,
+              3
+            ]
+          }
+        },
+        "param_count": 197
+      },
+      "equivalence": {
+        "status": "pass",
+        "cases": 10000,
+        "seed": 123456789
+      },
+      "structured": {
+        "status": "pass",
+        "total_cases": 101123,
+        "param_count": 197,
+        "buffer_count": 0
+      },
+      "status": "structured_pass",
+      "random_100k": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 197,
+        "buffer_count": 0
+      },
+      "random_1m": {
+        "status": "ok",
+        "exact": 1000000,
+        "mismatches": 0,
+        "total": 1000000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 197,
+        "buffer_count": 0
+      },
+      "random_100k_extra": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 987654321,
+        "param_count": 197,
+        "buffer_count": 0
+      },
+      "new_best_after_validation": 197
+    },
+    {
+      "exp_id": 43,
+      "module": "param_candidate_exp43_mlx197_plus_vproj_share_baseline",
+      "family": "baseline",
+      "expected_params": 190,
+      "source_compare": "param_343",
+      "milestone": false,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp43_mlx197_plus_vproj_share_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 0,
+          "stdout": "{\"buffer_count\": 0, \"lm_head_rank32\": 3, \"lm_head_rank64\": 5, \"meta\": {\"embedding_rank2_residual\": 0.0, \"fixed_scale_rmsnorms\": {\"layers.0.input_layernorm\": 1.0, \"layers.0.post_attention_layernorm\": 1.0, \"layers.0.self_attn.k_norm\": 16.0, \"layers.0.self_attn.q_norm\": 16.0, \"layers.1.input_layernorm\": 1.0, \"layers.1.post_attention_layernorm\": 1.0, \"layers.1.self_attn.k_norm\": 16.0, \"layers.1.self_attn.q_norm\": 16.0, \"norm\": 1.0}, \"rank1_major_linears_residuals\": {\"layers.0.mlp.down_proj\": 0.0, \"layers.0.mlp.up_proj\": 0.0, \"layers.0.self_attn.k_proj\": 0.0, \"layers.0.self_attn.o_proj\": 0.0, \"layers.0.self_attn.q_proj\": 0.0, \"layers.0.self_attn.v_proj\": 0.0, \"layers.1.mlp.down_proj\": 0.0, \"layers.1.mlp.up_proj\": 0.0, \"layers.1.self_attn.k_proj\": 0.0, \"layers.1.self_attn.o_proj\": 0.0, \"layers.1.self_attn.q_proj\": 0.0, \"layers.1.self_attn.v_proj\": 0.0}, \"shared_vproj\": {\"module_shared\": true, \"pre_equal\": true, \"weight_param_shared\": true}, \"sparse_gate0\": {\"kind\": \"baseline\", \"stored_shape\": [2, 3]}}, \"param_count\": 190}\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 1.6862170696258545,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp43_mlx197_plus_vproj_share_baseline'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        },
+        {
+          "kind": "equivalence",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--compare-reference-module",
+            "param_343",
+            "--compare-candidate-module",
+            "param_candidate_exp43_mlx197_plus_vproj_share_baseline",
+            "--compare-num-tests",
+            "10000",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_equiv.json"
+          ],
+          "returncode": 0,
+          "stdout": "equivalence progress: 4096/10000\nequivalence progress: 8192/10000\nequivalence progress: 10000/10000\nequivalence passed (10000 cases, seed 123456789): param_candidate_exp43_mlx197_plus_vproj_share_baseline == param_343\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 5.716695070266724,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_equiv.json"
+        },
+        {
+          "kind": "structured",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp43_mlx197_plus_vproj_share_baseline",
+            "--oracle-module",
+            "param_343",
+            "--structured-suite",
+            "--num-tests",
+            "0",
+            "--expected-param-count",
+            "190",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_structured.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 190\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\n  layers.1.self_attn.q_proj.u: 4 (4,)\nbuffer count (named_buffers): 0\nstructured suite: smoke passed (10 cases)\nstructured suite: power-boundaries passed (48 cases)\nstructured suite: carry-chains passed (65 cases)\nstructured suite: position-digit-sweep passed (1000 cases)\nstructured suite: no-carry-random passed (50000 cases)\nstructured suite: heavy-carry-random passed (50000 cases)\nstructured suite passed (101123 total cases)\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 24.022886753082275,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 190 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_structured.json"
+        },
+        {
+          "kind": "random_100k",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp43_mlx197_plus_vproj_share_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "190",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc100k.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 190\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\n  layers.1.self_attn.q_proj.u: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 20.755561351776123,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 190 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc100k.json"
+        },
+        {
+          "kind": "random_1m",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp43_mlx197_plus_vproj_share_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "1000000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "190",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc1m.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 190\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\n  layers.1.self_attn.q_proj.u: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 102400/1000000\naccuracy progress: 200704/1000000\naccuracy progress: 303104/1000000\naccuracy progress: 401408/1000000\naccuracy progress: 503808/1000000\naccuracy progress: 602112/1000000\naccuracy progress: 700416/1000000\naccuracy progress: 802816/1000000\naccuracy progress: 901120/1000000\naccuracy progress: 1000000/1000000\nrandom accuracy: exact=1000000, mismatches=0, total=1000000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 198.0909605026245,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 190 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc1m.json"
+        },
+        {
+          "kind": "random_100k_extra",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp43_mlx197_plus_vproj_share_baseline",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "190",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "987654321",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc100k_seed987654321.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 190\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\n  layers.1.self_attn.q_proj.u: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=987654321\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 21.948520183563232,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 190 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc100k_seed987654321.json"
+        }
+      ],
+      "build_meta": {
+        "buffer_count": 0,
+        "lm_head_rank32": 3,
+        "lm_head_rank64": 5,
+        "meta": {
+          "embedding_rank2_residual": 0.0,
+          "fixed_scale_rmsnorms": {
+            "layers.0.input_layernorm": 1.0,
+            "layers.0.post_attention_layernorm": 1.0,
+            "layers.0.self_attn.k_norm": 16.0,
+            "layers.0.self_attn.q_norm": 16.0,
+            "layers.1.input_layernorm": 1.0,
+            "layers.1.post_attention_layernorm": 1.0,
+            "layers.1.self_attn.k_norm": 16.0,
+            "layers.1.self_attn.q_norm": 16.0,
+            "norm": 1.0
+          },
+          "rank1_major_linears_residuals": {
+            "layers.0.mlp.down_proj": 0.0,
+            "layers.0.mlp.up_proj": 0.0,
+            "layers.0.self_attn.k_proj": 0.0,
+            "layers.0.self_attn.o_proj": 0.0,
+            "layers.0.self_attn.q_proj": 0.0,
+            "layers.0.self_attn.v_proj": 0.0,
+            "layers.1.mlp.down_proj": 0.0,
+            "layers.1.mlp.up_proj": 0.0,
+            "layers.1.self_attn.k_proj": 0.0,
+            "layers.1.self_attn.o_proj": 0.0,
+            "layers.1.self_attn.q_proj": 0.0,
+            "layers.1.self_attn.v_proj": 0.0
+          },
+          "shared_vproj": {
+            "module_shared": true,
+            "pre_equal": true,
+            "weight_param_shared": true
+          },
+          "sparse_gate0": {
+            "kind": "baseline",
+            "stored_shape": [
+              2,
+              3
+            ]
+          }
+        },
+        "param_count": 190
+      },
+      "equivalence": {
+        "status": "pass",
+        "cases": 10000,
+        "seed": 123456789
+      },
+      "structured": {
+        "status": "pass",
+        "total_cases": 101123,
+        "param_count": 190,
+        "buffer_count": 0
+      },
+      "status": "structured_pass",
+      "random_100k": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 190,
+        "buffer_count": 0
+      },
+      "random_1m": {
+        "status": "ok",
+        "exact": 1000000,
+        "mismatches": 0,
+        "total": 1000000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 190,
+        "buffer_count": 0
+      },
+      "random_100k_extra": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 987654321,
+        "param_count": 190,
+        "buffer_count": 0
+      },
+      "new_best_after_validation": 190
+    },
+    {
+      "exp_id": 44,
+      "module": "param_candidate_exp44_mlx197_plus_lmhead_r3_baseline",
+      "family": "baseline",
+      "expected_params": 192,
+      "source_compare": "param_343",
+      "milestone": false,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp44_mlx197_plus_lmhead_r3_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 1,
+          "stdout": "",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_exp44_mlx197_plus_lmhead_r3_baseline.py\", line 17, in build_magic_model\n    model = build_exact_reparam_baseline_model(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 658, in build_exact_reparam_baseline_model\n    return _compose_exact_recipe(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 642, in _compose_exact_recipe\n    factorize_lm_head_rank3(model, tol=tol)\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 559, in factorize_lm_head_rank3\n    rep = FactorizedLinearExact.from_dense_exact(model.lm_head, rank=3, tol=tol)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 168, in from_dense_exact\n    A, B, residual = _factorize_matrix_exact_cur(w, rank=rank, tol=tol)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 78, in _factorize_matrix_exact_cur\n    raise ValueError(f\"expected rank {rank}, got rank {actual_rank} for shape {tuple(w.shape)}\")\nValueError: expected rank 3, got rank 5 for shape (10, 5)\nERROR conda.cli.main_run:execute(142): `conda run python -c import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp44_mlx197_plus_lmhead_r3_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))` failed. (See above for error)\n",
+          "duration_sec": 1.6610069274902344,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp44_mlx197_plus_lmhead_r3_baseline'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        }
+      ],
+      "status": "build_fail",
+      "failure_class": "implementation/assumption failure during exact build",
+      "build_error": "OMP: Warning #179: Function Can't set size of SHM failed:\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_exp44_mlx197_plus_lmhead_r3_baseline.py\", line 17, in build_magic_model\n    model = build_exact_reparam_baseline_model(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 658, in build_exact_reparam_baseline_model\n    return _compose_exact_recipe(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 642, in _compose_exact_recipe\n    factorize_lm_head_rank3(model, tol=tol)\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 559, in factorize_lm_head_rank3\n    rep = FactorizedLinearExact.from_dense_exact(model.lm_head, rank=3, tol=tol)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 168, in from_dense_exact\n    A, B, residual = _factorize_matrix_exact_cur(w, rank=rank, tol=tol)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 78, in _factorize_matrix_exact_cur\n    raise ValueError(f\"expected rank {rank}, got rank {actual_rank} for shape {tuple(w.shape)}\")\nValueError: expected rank 3, got rank 5 for shape (10, 5)\nERROR conda.cli.main_run:execute(142): `conda run python -c import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp44_mlx197_plus_lmhead_r3_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))` failed. (See above for error)"
+    },
+    {
+      "exp_id": 45,
+      "module": "param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline",
+      "family": "baseline",
+      "expected_params": 185,
+      "source_compare": "param_343",
+      "milestone": true,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 1,
+          "stdout": "",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline.py\", line 17, in build_magic_model\n    model = build_exact_reparam_baseline_model(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 658, in build_exact_reparam_baseline_model\n    return _compose_exact_recipe(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 642, in _compose_exact_recipe\n    factorize_lm_head_rank3(model, tol=tol)\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 559, in factorize_lm_head_rank3\n    rep = FactorizedLinearExact.from_dense_exact(model.lm_head, rank=3, tol=tol)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 168, in from_dense_exact\n    A, B, residual = _factorize_matrix_exact_cur(w, rank=rank, tol=tol)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 78, in _factorize_matrix_exact_cur\n    raise ValueError(f\"expected rank {rank}, got rank {actual_rank} for shape {tuple(w.shape)}\")\nValueError: expected rank 3, got rank 5 for shape (10, 5)\nERROR conda.cli.main_run:execute(142): `conda run python -c import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))` failed. (See above for error)\n",
+          "duration_sec": 1.6414291858673096,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        }
+      ],
+      "status": "build_fail",
+      "failure_class": "implementation/assumption failure during exact build",
+      "build_error": "OMP: Warning #179: Function Can't set size of SHM failed:\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline.py\", line 17, in build_magic_model\n    model = build_exact_reparam_baseline_model(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 658, in build_exact_reparam_baseline_model\n    return _compose_exact_recipe(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 642, in _compose_exact_recipe\n    factorize_lm_head_rank3(model, tol=tol)\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 559, in factorize_lm_head_rank3\n    rep = FactorizedLinearExact.from_dense_exact(model.lm_head, rank=3, tol=tol)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 168, in from_dense_exact\n    A, B, residual = _factorize_matrix_exact_cur(w, rank=rank, tol=tol)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 78, in _factorize_matrix_exact_cur\n    raise ValueError(f\"expected rank {rank}, got rank {actual_rank} for shape {tuple(w.shape)}\")\nValueError: expected rank 3, got rank 5 for shape (10, 5)\nERROR conda.cli.main_run:execute(142): `conda run python -c import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))` failed. (See above for error)"
+    },
+    {
+      "exp_id": 46,
+      "module": "param_candidate_exp46_mlx197_recipe_on_exp3",
+      "family": "exp3",
+      "expected_params": 195,
+      "source_compare": "param_candidate_exp03_layer0_mlp_int2",
+      "milestone": true,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp46_mlx197_recipe_on_exp3'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 0,
+          "stdout": "{\"buffer_count\": 0, \"lm_head_rank32\": 3, \"lm_head_rank64\": 5, \"meta\": {\"embedding_rank2_residual\": 0.0, \"fixed_scale_rmsnorms\": {\"layers.0.input_layernorm\": 1.0, \"layers.0.post_attention_layernorm\": 1.0, \"layers.0.self_attn.k_norm\": 16.0, \"layers.0.self_attn.q_norm\": 16.0, \"layers.1.input_layernorm\": 1.0, \"layers.1.post_attention_layernorm\": 1.0, \"layers.1.self_attn.k_norm\": 16.0, \"layers.1.self_attn.q_norm\": 16.0, \"norm\": 1.0}, \"rank1_major_linears_residuals\": {\"layers.0.mlp.down_proj\": 0.0, \"layers.0.mlp.up_proj\": 0.0, \"layers.0.self_attn.k_proj\": 0.0, \"layers.0.self_attn.o_proj\": 0.0, \"layers.0.self_attn.q_proj\": 0.0, \"layers.0.self_attn.v_proj\": 0.0, \"layers.1.mlp.down_proj\": 0.0, \"layers.1.mlp.up_proj\": 0.0, \"layers.1.self_attn.k_proj\": 0.0, \"layers.1.self_attn.o_proj\": 0.0, \"layers.1.self_attn.q_proj\": 0.0, \"layers.1.self_attn.v_proj\": 0.0}, \"sparse_gate0\": {\"kind\": \"exp3\", \"stored_shape\": [2, 3]}}, \"param_count\": 195}\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 1.6058876514434814,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp46_mlx197_recipe_on_exp3'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        },
+        {
+          "kind": "equivalence",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--compare-reference-module",
+            "param_candidate_exp03_layer0_mlp_int2",
+            "--compare-candidate-module",
+            "param_candidate_exp46_mlx197_recipe_on_exp3",
+            "--compare-num-tests",
+            "10000",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_equiv.json"
+          ],
+          "returncode": 0,
+          "stdout": "equivalence progress: 4096/10000\nequivalence progress: 8192/10000\nequivalence progress: 10000/10000\nequivalence passed (10000 cases, seed 123456789): param_candidate_exp46_mlx197_recipe_on_exp3 == param_candidate_exp03_layer0_mlp_int2\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 5.2736804485321045,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_candidate_exp03_layer0_mlp_int2 --compare-candidate-module param_candidate_exp46_mlx197_recipe_on_exp3 --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_equiv.json"
+        },
+        {
+          "kind": "structured",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp46_mlx197_recipe_on_exp3",
+            "--oracle-module",
+            "param_343",
+            "--structured-suite",
+            "--num-tests",
+            "0",
+            "--expected-param-count",
+            "195",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_structured.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 195\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\nbuffer count (named_buffers): 0\nstructured suite: smoke passed (10 cases)\nstructured suite: power-boundaries passed (48 cases)\nstructured suite: carry-chains passed (65 cases)\nstructured suite: position-digit-sweep passed (1000 cases)\nstructured suite: no-carry-random passed (50000 cases)\nstructured suite: heavy-carry-random passed (50000 cases)\nstructured suite passed (101123 total cases)\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 22.592167139053345,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp46_mlx197_recipe_on_exp3 --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 195 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_structured.json"
+        },
+        {
+          "kind": "random_100k",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp46_mlx197_recipe_on_exp3",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "195",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc100k.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 195\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 20.170879364013672,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp46_mlx197_recipe_on_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 195 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc100k.json"
+        },
+        {
+          "kind": "random_1m",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp46_mlx197_recipe_on_exp3",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "1000000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "195",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc1m.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 195\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 102400/1000000\naccuracy progress: 200704/1000000\naccuracy progress: 303104/1000000\naccuracy progress: 401408/1000000\naccuracy progress: 503808/1000000\naccuracy progress: 602112/1000000\naccuracy progress: 700416/1000000\naccuracy progress: 802816/1000000\naccuracy progress: 901120/1000000\naccuracy progress: 1000000/1000000\nrandom accuracy: exact=1000000, mismatches=0, total=1000000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 201.4685845375061,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp46_mlx197_recipe_on_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 195 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc1m.json"
+        },
+        {
+          "kind": "random_100k_extra",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp46_mlx197_recipe_on_exp3",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "195",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "987654321",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc100k_seed987654321.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 195\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.1.self_attn.v_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=987654321\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 22.00177311897278,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp46_mlx197_recipe_on_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 195 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc100k_seed987654321.json"
+        }
+      ],
+      "build_meta": {
+        "buffer_count": 0,
+        "lm_head_rank32": 3,
+        "lm_head_rank64": 5,
+        "meta": {
+          "embedding_rank2_residual": 0.0,
+          "fixed_scale_rmsnorms": {
+            "layers.0.input_layernorm": 1.0,
+            "layers.0.post_attention_layernorm": 1.0,
+            "layers.0.self_attn.k_norm": 16.0,
+            "layers.0.self_attn.q_norm": 16.0,
+            "layers.1.input_layernorm": 1.0,
+            "layers.1.post_attention_layernorm": 1.0,
+            "layers.1.self_attn.k_norm": 16.0,
+            "layers.1.self_attn.q_norm": 16.0,
+            "norm": 1.0
+          },
+          "rank1_major_linears_residuals": {
+            "layers.0.mlp.down_proj": 0.0,
+            "layers.0.mlp.up_proj": 0.0,
+            "layers.0.self_attn.k_proj": 0.0,
+            "layers.0.self_attn.o_proj": 0.0,
+            "layers.0.self_attn.q_proj": 0.0,
+            "layers.0.self_attn.v_proj": 0.0,
+            "layers.1.mlp.down_proj": 0.0,
+            "layers.1.mlp.up_proj": 0.0,
+            "layers.1.self_attn.k_proj": 0.0,
+            "layers.1.self_attn.o_proj": 0.0,
+            "layers.1.self_attn.q_proj": 0.0,
+            "layers.1.self_attn.v_proj": 0.0
+          },
+          "sparse_gate0": {
+            "kind": "exp3",
+            "stored_shape": [
+              2,
+              3
+            ]
+          }
+        },
+        "param_count": 195
+      },
+      "equivalence": {
+        "status": "pass",
+        "cases": 10000,
+        "seed": 123456789
+      },
+      "structured": {
+        "status": "pass",
+        "total_cases": 101123,
+        "param_count": 195,
+        "buffer_count": 0
+      },
+      "status": "structured_pass",
+      "random_100k": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 195,
+        "buffer_count": 0
+      },
+      "random_1m": {
+        "status": "ok",
+        "exact": 1000000,
+        "mismatches": 0,
+        "total": 1000000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 195,
+        "buffer_count": 0
+      },
+      "random_100k_extra": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 987654321,
+        "param_count": 195,
+        "buffer_count": 0
+      }
+    },
+    {
+      "exp_id": 47,
+      "module": "param_candidate_exp47_mlx195_plus_vproj_share_exp3",
+      "family": "exp3",
+      "expected_params": 188,
+      "source_compare": "param_candidate_exp03_layer0_mlp_int2",
+      "milestone": false,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp47_mlx195_plus_vproj_share_exp3'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 0,
+          "stdout": "{\"buffer_count\": 0, \"lm_head_rank32\": 3, \"lm_head_rank64\": 5, \"meta\": {\"embedding_rank2_residual\": 0.0, \"fixed_scale_rmsnorms\": {\"layers.0.input_layernorm\": 1.0, \"layers.0.post_attention_layernorm\": 1.0, \"layers.0.self_attn.k_norm\": 16.0, \"layers.0.self_attn.q_norm\": 16.0, \"layers.1.input_layernorm\": 1.0, \"layers.1.post_attention_layernorm\": 1.0, \"layers.1.self_attn.k_norm\": 16.0, \"layers.1.self_attn.q_norm\": 16.0, \"norm\": 1.0}, \"rank1_major_linears_residuals\": {\"layers.0.mlp.down_proj\": 0.0, \"layers.0.mlp.up_proj\": 0.0, \"layers.0.self_attn.k_proj\": 0.0, \"layers.0.self_attn.o_proj\": 0.0, \"layers.0.self_attn.q_proj\": 0.0, \"layers.0.self_attn.v_proj\": 0.0, \"layers.1.mlp.down_proj\": 0.0, \"layers.1.mlp.up_proj\": 0.0, \"layers.1.self_attn.k_proj\": 0.0, \"layers.1.self_attn.o_proj\": 0.0, \"layers.1.self_attn.q_proj\": 0.0, \"layers.1.self_attn.v_proj\": 0.0}, \"shared_vproj\": {\"module_shared\": true, \"pre_equal\": true, \"weight_param_shared\": true}, \"sparse_gate0\": {\"kind\": \"exp3\", \"stored_shape\": [2, 3]}}, \"param_count\": 188}\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 1.8438541889190674,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp47_mlx195_plus_vproj_share_exp3'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        },
+        {
+          "kind": "equivalence",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--compare-reference-module",
+            "param_candidate_exp03_layer0_mlp_int2",
+            "--compare-candidate-module",
+            "param_candidate_exp47_mlx195_plus_vproj_share_exp3",
+            "--compare-num-tests",
+            "10000",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_equiv.json"
+          ],
+          "returncode": 0,
+          "stdout": "equivalence progress: 4096/10000\nequivalence progress: 8192/10000\nequivalence progress: 10000/10000\nequivalence passed (10000 cases, seed 123456789): param_candidate_exp47_mlx195_plus_vproj_share_exp3 == param_candidate_exp03_layer0_mlp_int2\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 5.350704908370972,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_candidate_exp03_layer0_mlp_int2 --compare-candidate-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_equiv.json"
+        },
+        {
+          "kind": "structured",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp47_mlx195_plus_vproj_share_exp3",
+            "--oracle-module",
+            "param_343",
+            "--structured-suite",
+            "--num-tests",
+            "0",
+            "--expected-param-count",
+            "188",
+            "--batch-size",
+            "4096",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_structured.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 188\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\n  layers.1.self_attn.q_proj.u: 4 (4,)\nbuffer count (named_buffers): 0\nstructured suite: smoke passed (10 cases)\nstructured suite: power-boundaries passed (48 cases)\nstructured suite: carry-chains passed (65 cases)\nstructured suite: position-digit-sweep passed (1000 cases)\nstructured suite: no-carry-random passed (50000 cases)\nstructured suite: heavy-carry-random passed (50000 cases)\nstructured suite passed (101123 total cases)\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 23.180649995803833,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 188 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_structured.json"
+        },
+        {
+          "kind": "random_100k",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp47_mlx195_plus_vproj_share_exp3",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "188",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc100k.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 188\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\n  layers.1.self_attn.q_proj.u: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 20.36450219154358,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 188 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc100k.json"
+        },
+        {
+          "kind": "random_1m",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp47_mlx195_plus_vproj_share_exp3",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "1000000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "188",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "123456789",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc1m.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 188\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\n  layers.1.self_attn.q_proj.u: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 102400/1000000\naccuracy progress: 200704/1000000\naccuracy progress: 303104/1000000\naccuracy progress: 401408/1000000\naccuracy progress: 503808/1000000\naccuracy progress: 602112/1000000\naccuracy progress: 700416/1000000\naccuracy progress: 802816/1000000\naccuracy progress: 901120/1000000\naccuracy progress: 1000000/1000000\nrandom accuracy: exact=1000000, mismatches=0, total=1000000, accuracy=1.00000000, seed=123456789\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 206.0102071762085,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 188 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc1m.json"
+        },
+        {
+          "kind": "random_100k_extra",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py",
+            "--model-module",
+            "param_candidate_exp47_mlx195_plus_vproj_share_exp3",
+            "--oracle-module",
+            "param_343",
+            "--num-tests",
+            "0",
+            "--random-accuracy-num-tests",
+            "100000",
+            "--min-random-accuracy",
+            "0.99",
+            "--expected-param-count",
+            "188",
+            "--batch-size",
+            "4096",
+            "--golden-seed",
+            "987654321",
+            "--failure-dump",
+            "/home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc100k_seed987654321.json"
+          ],
+          "returncode": 0,
+          "stdout": "parameter count (named_parameters): 188\nparameter breakdown (top 20 by size):\n  lm_head.weight: 50 (10, 5)\n  embed_tokens.token_factors: 20 (10, 2)\n  layers.1.mlp.gate_proj.weight: 15 (3, 5)\n  embed_tokens.mix: 10 (2, 5)\n  layers.0.mlp.gate_proj.w23: 6 (2, 3)\n  layers.0.mlp.down_proj.u: 5 (5,)\n  layers.0.mlp.up_proj.v: 5 (5,)\n  layers.0.self_attn.k_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.u: 5 (5,)\n  layers.0.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.v_proj.v: 5 (5,)\n  layers.1.mlp.down_proj.u: 5 (5,)\n  layers.1.mlp.up_proj.v: 5 (5,)\n  layers.1.self_attn.k_proj.v: 5 (5,)\n  layers.1.self_attn.o_proj.u: 5 (5,)\n  layers.1.self_attn.q_proj.v: 5 (5,)\n  layers.0.self_attn.o_proj.v: 4 (4,)\n  layers.0.self_attn.q_proj.u: 4 (4,)\n  layers.1.self_attn.o_proj.v: 4 (4,)\n  layers.1.self_attn.q_proj.u: 4 (4,)\nbuffer count (named_buffers): 0\naccuracy progress: 100000/100000\nrandom accuracy: exact=100000, mismatches=0, total=100000, accuracy=1.00000000, seed=987654321\n",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\n",
+          "duration_sec": 22.53808617591858,
+          "cmd_str": "conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 188 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc100k_seed987654321.json"
+        }
+      ],
+      "build_meta": {
+        "buffer_count": 0,
+        "lm_head_rank32": 3,
+        "lm_head_rank64": 5,
+        "meta": {
+          "embedding_rank2_residual": 0.0,
+          "fixed_scale_rmsnorms": {
+            "layers.0.input_layernorm": 1.0,
+            "layers.0.post_attention_layernorm": 1.0,
+            "layers.0.self_attn.k_norm": 16.0,
+            "layers.0.self_attn.q_norm": 16.0,
+            "layers.1.input_layernorm": 1.0,
+            "layers.1.post_attention_layernorm": 1.0,
+            "layers.1.self_attn.k_norm": 16.0,
+            "layers.1.self_attn.q_norm": 16.0,
+            "norm": 1.0
+          },
+          "rank1_major_linears_residuals": {
+            "layers.0.mlp.down_proj": 0.0,
+            "layers.0.mlp.up_proj": 0.0,
+            "layers.0.self_attn.k_proj": 0.0,
+            "layers.0.self_attn.o_proj": 0.0,
+            "layers.0.self_attn.q_proj": 0.0,
+            "layers.0.self_attn.v_proj": 0.0,
+            "layers.1.mlp.down_proj": 0.0,
+            "layers.1.mlp.up_proj": 0.0,
+            "layers.1.self_attn.k_proj": 0.0,
+            "layers.1.self_attn.o_proj": 0.0,
+            "layers.1.self_attn.q_proj": 0.0,
+            "layers.1.self_attn.v_proj": 0.0
+          },
+          "shared_vproj": {
+            "module_shared": true,
+            "pre_equal": true,
+            "weight_param_shared": true
+          },
+          "sparse_gate0": {
+            "kind": "exp3",
+            "stored_shape": [
+              2,
+              3
+            ]
+          }
+        },
+        "param_count": 188
+      },
+      "equivalence": {
+        "status": "pass",
+        "cases": 10000,
+        "seed": 123456789
+      },
+      "structured": {
+        "status": "pass",
+        "total_cases": 101123,
+        "param_count": 188,
+        "buffer_count": 0
+      },
+      "status": "structured_pass",
+      "random_100k": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 188,
+        "buffer_count": 0
+      },
+      "random_1m": {
+        "status": "ok",
+        "exact": 1000000,
+        "mismatches": 0,
+        "total": 1000000,
+        "accuracy": 1.0,
+        "seed": 123456789,
+        "param_count": 188,
+        "buffer_count": 0
+      },
+      "random_100k_extra": {
+        "status": "ok",
+        "exact": 100000,
+        "mismatches": 0,
+        "total": 100000,
+        "accuracy": 1.0,
+        "seed": 987654321,
+        "param_count": 188,
+        "buffer_count": 0
+      },
+      "new_best_after_validation": 188
+    },
+    {
+      "exp_id": 48,
+      "module": "param_candidate_exp48_mlx195_plus_lmhead_r3_exp3",
+      "family": "exp3",
+      "expected_params": 190,
+      "source_compare": "param_candidate_exp03_layer0_mlp_int2",
+      "milestone": false,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp48_mlx195_plus_lmhead_r3_exp3'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 1,
+          "stdout": "",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_exp48_mlx195_plus_lmhead_r3_exp3.py\", line 17, in build_magic_model\n    model = build_exact_reparam_exp3_model(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 681, in build_exact_reparam_exp3_model\n    return _compose_exact_recipe(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 642, in _compose_exact_recipe\n    factorize_lm_head_rank3(model, tol=tol)\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 559, in factorize_lm_head_rank3\n    rep = FactorizedLinearExact.from_dense_exact(model.lm_head, rank=3, tol=tol)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 168, in from_dense_exact\n    A, B, residual = _factorize_matrix_exact_cur(w, rank=rank, tol=tol)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 78, in _factorize_matrix_exact_cur\n    raise ValueError(f\"expected rank {rank}, got rank {actual_rank} for shape {tuple(w.shape)}\")\nValueError: expected rank 3, got rank 5 for shape (10, 5)\nERROR conda.cli.main_run:execute(142): `conda run python -c import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp48_mlx195_plus_lmhead_r3_exp3'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))` failed. (See above for error)\n",
+          "duration_sec": 1.6946754455566406,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp48_mlx195_plus_lmhead_r3_exp3'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        }
+      ],
+      "status": "build_fail",
+      "failure_class": "implementation/assumption failure during exact build",
+      "build_error": "OMP: Warning #179: Function Can't set size of SHM failed:\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_exp48_mlx195_plus_lmhead_r3_exp3.py\", line 17, in build_magic_model\n    model = build_exact_reparam_exp3_model(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 681, in build_exact_reparam_exp3_model\n    return _compose_exact_recipe(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 642, in _compose_exact_recipe\n    factorize_lm_head_rank3(model, tol=tol)\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 559, in factorize_lm_head_rank3\n    rep = FactorizedLinearExact.from_dense_exact(model.lm_head, rank=3, tol=tol)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 168, in from_dense_exact\n    A, B, residual = _factorize_matrix_exact_cur(w, rank=rank, tol=tol)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 78, in _factorize_matrix_exact_cur\n    raise ValueError(f\"expected rank {rank}, got rank {actual_rank} for shape {tuple(w.shape)}\")\nValueError: expected rank 3, got rank 5 for shape (10, 5)\nERROR conda.cli.main_run:execute(142): `conda run python -c import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp48_mlx195_plus_lmhead_r3_exp3'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))` failed. (See above for error)"
+    },
+    {
+      "exp_id": 49,
+      "module": "param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3",
+      "family": "exp3",
+      "expected_params": 183,
+      "source_compare": "param_candidate_exp03_layer0_mlp_int2",
+      "milestone": true,
+      "commands": [
+        {
+          "kind": "build_meta",
+          "cmd": [
+            "conda",
+            "run",
+            "-n",
+            "param343-addition-wsl",
+            "python",
+            "-c",
+            "import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))"
+          ],
+          "returncode": 1,
+          "stdout": "",
+          "stderr": "OMP: Warning #179: Function Can't set size of SHM failed:\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3.py\", line 17, in build_magic_model\n    model = build_exact_reparam_exp3_model(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 681, in build_exact_reparam_exp3_model\n    return _compose_exact_recipe(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 642, in _compose_exact_recipe\n    factorize_lm_head_rank3(model, tol=tol)\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 559, in factorize_lm_head_rank3\n    rep = FactorizedLinearExact.from_dense_exact(model.lm_head, rank=3, tol=tol)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 168, in from_dense_exact\n    A, B, residual = _factorize_matrix_exact_cur(w, rank=rank, tol=tol)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 78, in _factorize_matrix_exact_cur\n    raise ValueError(f\"expected rank {rank}, got rank {actual_rank} for shape {tuple(w.shape)}\")\nValueError: expected rank 3, got rank 5 for shape (10, 5)\nERROR conda.cli.main_run:execute(142): `conda run python -c import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))` failed. (See above for error)\n",
+          "duration_sec": 1.6515765190124512,
+          "cmd_str": "conda run -n param343-addition-wsl python -c 'import importlib,json,torch,traceback; mod=importlib.import_module('\"'\"'param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3'\"'\"'); m=mod.build_magic_model(); meta=getattr(m,'\"'\"'_exact_reparam_metadata'\"'\"',{}); out={'\"'\"'param_count'\"'\"':sum(p.numel() for p in m.parameters()),'\"'\"'buffer_count'\"'\"':sum(b.numel() for b in m.buffers()),'\"'\"'meta'\"'\"':meta,'\"'\"'lm_head_rank32'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'\"'\"'lm_head_rank64'\"'\"':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))'"
+        }
+      ],
+      "status": "build_fail",
+      "failure_class": "implementation/assumption failure during exact build",
+      "build_error": "OMP: Warning #179: Function Can't set size of SHM failed:\nTraceback (most recent call last):\n  File \"<string>\", line 1, in <module>\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3.py\", line 17, in build_magic_model\n    model = build_exact_reparam_exp3_model(\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 681, in build_exact_reparam_exp3_model\n    return _compose_exact_recipe(\n           ^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 642, in _compose_exact_recipe\n    factorize_lm_head_rank3(model, tol=tol)\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 559, in factorize_lm_head_rank3\n    rep = FactorizedLinearExact.from_dense_exact(model.lm_head, rank=3, tol=tol)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 168, in from_dense_exact\n    A, B, residual = _factorize_matrix_exact_cur(w, rank=rank, tol=tol)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/khaled/03f119dcfc4b8351855c00b1c5224b58/param_candidate_utils.py\", line 78, in _factorize_matrix_exact_cur\n    raise ValueError(f\"expected rank {rank}, got rank {actual_rank} for shape {tuple(w.shape)}\")\nValueError: expected rank 3, got rank 5 for shape (10, 5)\nERROR conda.cli.main_run:execute(142): `conda run python -c import importlib,json,torch,traceback; mod=importlib.import_module('param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3'); m=mod.build_magic_model(); meta=getattr(m,'_exact_reparam_metadata',{}); out={'param_count':sum(p.numel() for p in m.parameters()),'buffer_count':sum(b.numel() for b in m.buffers()),'meta':meta,'lm_head_rank32':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().float()).item()),'lm_head_rank64':int(torch.linalg.matrix_rank(m.lm_head.weight.detach().double()).item())}; print(json.dumps(out, sort_keys=True))` failed. (See above for error)"
+    }
+  ],
+  "notes": [
+    "Exact lm_head rank-3 factorization is expected to fail if lm_head rank64 != 3 (observed rank64=5)."
+  ],
+  "finished_utc": "2026-02-24T22:04:50Z"
+}

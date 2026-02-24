@@ -486,3 +486,303 @@ Append-only lab notebook for compression experiments against `test_param_343.py`
 - Failure mode details: Positional / temporal misalignment (digit emitted one step late).
 - What I learned: Single-query-head compression via pure head slicing reaches `288` params but fails immediately; head interactions appear essential without re-optimizing weights or changing encoding.
 - Next experiment planned: Shift to the next batch focused on encoding changes and/or local search to rescue sub-323 architectures (especially single-head and layer1-width2 variants).
+
+
+## Pivot — Low-Rank Exact Reparameterization Reproduction (MLX Report)
+- Timestamp (UTC): 2026-02-24T21:36:26Z
+- External frontier information: Reported MLX reproduction achieves 197 parameters via exact reparameterization (rank-1 linears, rank-2 embedding, sparse layer0 gate, fixed-scale RMSNorm without learnable norm vectors), with full addition tests passing. This is treated as a legitimate hypothesis, not accepted locally until our PyTorch harness reproduces it.
+- Fairness note: The planned transformations are exact reparameterizations / exact sharing within the transformer forward path. No harness edits, no task-semantic changes, no lookup tables, no oracle leakage, and parameter accounting remains via `named_parameters()` in `test_param_343.py`.
+- Parameter delta math (baseline 343 target): `343 - 84 (rank1 major linears) - 20 (embed rank2) - 9 (sparse gate0) - 33 (learnable norm vectors removed, fixed-scale RMSNorm retained) = 197`.
+- Parameter delta math (Exp3 lineage 328 target): `328 - 76 (rank1 major linears) - 20 (embed rank2) - 4 (sparse gate0 on width-2 layer0 gate) - 33 (learnable norm vectors removed, fixed-scale RMSNorm retained) = 195`.
+- Local preflight assumptions to verify before experiments: targeted major linears are exact rank-1, embedding is exact rank-2, layer0 gate has the expected sparse pattern, and `v_proj` matches across layers for exact sharing.
+- Reproduction plan for this batch (`Exp38`–`Exp49`):
+  - Baseline-family exact component checks (`Exp38`–`Exp41`)
+  - Full MLX-style exact recipe reproduction (`Exp42`, target 197)
+  - Exact extensions below 197 via `v_proj` sharing and exact rank-3 `lm_head` factorization (`Exp43`–`Exp45`)
+  - Stack the same recipe on the proven `Exp3` layer0-width2 lineage (`Exp46`–`Exp49`, target as low as 183 with additional exact extensions)
+- Validation protocol: equivalence-first (10k random) for exact reparameterizations, then structured suite, then full random accuracy ladder (100k / 1M / extra seed) on milestone and new-best candidates.
+
+## Experiment 38 — Rank-1 Major Linears Only (Baseline) (PASS)
+- Timestamp (UTC): 2026-02-24T22:06:41Z
+- Candidate module: `param_candidate_exp38_rank1_major_linears_baseline`
+- Hypothesis: Exact rank-1 reparameterization of q/k/v/o and MLP up/down in both layers preserves behavior while cutting parameters substantially.
+- Exact architecture/config changes: Base `param_343`; replace all `q_proj`, `k_proj`, `v_proj`, `o_proj`, `mlp.up_proj`, and `mlp.down_proj` in both layers with `Rank1LinearExact(u,v)` modules; leave embedding, gate, norms, and `lm_head` unchanged.
+- Explicit sharing mode: none
+- Parameter count (named_parameters): 259
+- Buffer count (named_buffers): 0
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: rank1 major linears max residual `0`; lm_head rank check `rank32=3`, `rank64=5`
+- Equivalence result (10k): PASS (10,000 random cases, seed `123456789`)
+- Validation commands:
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp38_rank1_major_linears_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_equiv.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp38_rank1_major_linears_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 259 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_structured.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp38_rank1_major_linears_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 259 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc100k.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp38_rank1_major_linears_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 259 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc1m.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp38_rank1_major_linears_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 259 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp38_acc100k_seed987654321.json`
+- Structured-suite results: PASS (101123 total cases)
+- Random results:
+  - Seed `123456789`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+  - Seed `123456789`, cases `1000000`: accuracy `1.00000000` (exact `1000000`, mismatches `0`)
+  - Seed `987654321`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+- Failure mode details: N/A
+- What I learned: Exact rank-1 structure in the major linears is real and highly compressive: this alone cuts the model from 343 to 259 with no behavior change.
+- Next experiment planned: Exp39
+
+## Experiment 39 — Fixed-Scale RMSNorms Only (Baseline) (PASS)
+- Timestamp (UTC): 2026-02-24T22:06:42Z
+- Candidate module: `param_candidate_exp39_fixedscale_rmsnorms_baseline`
+- Hypothesis: Removing learnable RMSNorm vectors while keeping exact RMSNorm math with fixed scales (1.0 / 16.0) preserves behavior, correcting the earlier mistaken identity-ablation interpretation.
+- Exact architecture/config changes: Base `param_343`; replace all layer norms/final norm with parameter-free `FixedScaleRMSNorm(scale=1.0)` and q/k norms with `FixedScaleRMSNorm(scale=16.0)`; no other changes.
+- Explicit sharing mode: none
+- Parameter count (named_parameters): 310
+- Buffer count (named_buffers): 0
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: fixed-scale RMSNorm replacements `9` modules; lm_head rank check `rank32=3`, `rank64=5`
+- Equivalence result (10k): PASS (10,000 random cases, seed `123456789`)
+- Validation commands:
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp39_fixedscale_rmsnorms_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp39_equiv.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp39_fixedscale_rmsnorms_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 310 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp39_structured.json`
+- Structured-suite results: PASS (101123 total cases)
+- Random results:
+  - Seed `123456789`, cases `0`: not run (not a milestone/new-best candidate after structured pass or build failed)
+- Failure mode details: N/A
+- What I learned: Prior norm-ablation failures were specifically about removing RMSNorm math; replacing learnable norm vectors with fixed scales preserves exact behavior and yields a valid 33-parameter reduction.
+- Next experiment planned: Exp40
+
+## Experiment 40 — Factorized Embedding Rank-2 Only (Baseline) (PASS)
+- Timestamp (UTC): 2026-02-24T22:06:43Z
+- Candidate module: `param_candidate_exp40_factored_embedding_baseline`
+- Hypothesis: The baseline `10x5` embedding is exactly rank-2 and can be replaced by an exact factorized embedding without changing function.
+- Exact architecture/config changes: Base `param_343`; replace `embed_tokens.weight (10x5)` with exact rank-2 factorization `token_factors (10x2)` and `mix (2x5)`; no other changes.
+- Explicit sharing mode: none
+- Parameter count (named_parameters): 323
+- Buffer count (named_buffers): 0
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: embedding rank-2 residual `0`; lm_head rank check `rank32=3`, `rank64=5`
+- Equivalence result (10k): PASS (10,000 random cases, seed `123456789`)
+- Validation commands:
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp40_factored_embedding_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp40_equiv.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp40_factored_embedding_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 323 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp40_structured.json`
+- Structured-suite results: PASS (101123 total cases)
+- Random results:
+  - Seed `123456789`, cases `0`: not run (not a milestone/new-best candidate after structured pass or build failed)
+- Failure mode details: N/A
+- What I learned: The embedding table is exactly rank-2 and can be factorized losslessly, confirming another large exact-reparameterization lever.
+- Next experiment planned: Exp41
+
+## Experiment 41 — Sparse Layer0 Gate Only (Baseline) (PASS)
+- Timestamp (UTC): 2026-02-24T22:06:44Z
+- Candidate module: `param_candidate_exp41_sparse_gate0_baseline`
+- Hypothesis: Layer0 `gate_proj` stores only 6 active coefficients and can be reparameterized sparsely with exact reconstruction and zero-padded inactive output channel.
+- Exact architecture/config changes: Base `param_343`; replace `layers.0.mlp.gate_proj (3x5)` with `SparseGate0ExactBaseline` storing only active `w23 (2x3)` and hard-padding the third output channel to zero.
+- Explicit sharing mode: none
+- Parameter count (named_parameters): 334
+- Buffer count (named_buffers): 0
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: sparse gate0 kind `baseline`, stored shape `(2, 3)`; lm_head rank check `rank32=3`, `rank64=5`
+- Equivalence result (10k): PASS (10,000 random cases, seed `123456789`)
+- Validation commands:
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp41_sparse_gate0_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp41_equiv.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp41_sparse_gate0_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 334 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp41_structured.json`
+- Structured-suite results: PASS (101123 total cases)
+- Random results:
+  - Seed `123456789`, cases `0`: not run (not a milestone/new-best candidate after structured pass or build failed)
+- Failure mode details: N/A
+- What I learned: Layer0 gate sparsity is structurally exact and can be encoded directly as a sparse submodule with zero-padding, preserving behavior.
+- Next experiment planned: Exp42
+
+## Experiment 42 — Full MLX-Style Exact Recipe Reproduction (Baseline) (PASS)
+- Timestamp (UTC): 2026-02-24T22:06:45Z
+- Candidate module: `param_candidate_exp42_mlx197_repro_baseline`
+- Hypothesis: Composing rank-1 major linears, fixed-scale RMSNorms, rank-2 embedding, and sparse layer0 gate reproduces the reported ~197 exact frontier in PyTorch.
+- Exact architecture/config changes: Base `param_343`; compose `Exp38 + Exp39 + Exp40 + Exp41` exact reparameterizations (no `v_proj` sharing, no `lm_head` factorization).
+- Explicit sharing mode: none
+- Parameter count (named_parameters): 197
+- Buffer count (named_buffers): 0
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: rank1 major linears max residual `0`; embedding rank-2 residual `0`; fixed-scale RMSNorm replacements `9` modules; sparse gate0 kind `baseline`, stored shape `(2, 3)`; lm_head rank check `rank32=3`, `rank64=5`
+- Equivalence result (10k): PASS (10,000 random cases, seed `123456789`)
+- Validation commands:
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp42_mlx197_repro_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_equiv.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp42_mlx197_repro_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 197 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_structured.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp42_mlx197_repro_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 197 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc100k.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp42_mlx197_repro_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 197 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc1m.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp42_mlx197_repro_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 197 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp42_acc100k_seed987654321.json`
+- Structured-suite results: PASS (101123 total cases)
+- Random results:
+  - Seed `123456789`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+  - Seed `123456789`, cases `1000000`: accuracy `1.00000000` (exact `1000000`, mismatches `0`)
+  - Seed `987654321`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+- Failure mode details: N/A
+- What I learned: The external MLX-style 197 result reproduces cleanly in the PyTorch harness under strict equivalence + structured + large random validation.
+- Next experiment planned: Exp43
+
+## Experiment 43 — Full Exact Recipe + Shared v_proj (Baseline Family) (PASS)
+- Timestamp (UTC): 2026-02-24T22:06:46Z
+- Candidate module: `param_candidate_exp43_mlx197_plus_vproj_share_baseline`
+- Hypothesis: On top of the 197 exact recipe, exact module aliasing of identical factorized `v_proj` across layers should reduce count further with no behavior change.
+- Exact architecture/config changes: Base `Exp42`; alias `layers[1].self_attn.v_proj = layers[0].self_attn.v_proj` after rank-1 reparameterization (same module instance / shared Parameters).
+- Explicit sharing mode: module aliasing (`v_proj` across layers)
+- Parameter count (named_parameters): 190
+- Buffer count (named_buffers): 0
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: rank1 major linears max residual `0`; embedding rank-2 residual `0`; fixed-scale RMSNorm replacements `9` modules; sparse gate0 kind `baseline`, stored shape `(2, 3)`; shared_vproj identity checks `{'module_shared': True, 'pre_equal': True, 'weight_param_shared': True}`; lm_head rank check `rank32=3`, `rank64=5`
+- Equivalence result (10k): PASS (10,000 random cases, seed `123456789`)
+- Validation commands:
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_343 --compare-candidate-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_equiv.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 190 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_structured.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 190 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc100k.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 190 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc1m.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp43_mlx197_plus_vproj_share_baseline --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 190 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp43_acc100k_seed987654321.json`
+- Structured-suite results: PASS (101123 total cases)
+- Random results:
+  - Seed `123456789`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+  - Seed `123456789`, cases `1000000`: accuracy `1.00000000` (exact `1000000`, mismatches `0`)
+  - Seed `987654321`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+- Failure mode details: N/A
+- What I learned: Combining the MLX recipe with exact `v_proj` module aliasing is a genuine additional win; exact sharing remains valuable after low-rank reparameterization.
+- Next experiment planned: Exp44
+
+## Experiment 44 — Full Exact Recipe + lm_head Rank-3 Factorization (Baseline Family) (BUILD FAIL)
+- Timestamp (UTC): 2026-02-24T22:06:47Z
+- Candidate module: `param_candidate_exp44_mlx197_plus_lmhead_r3_baseline`
+- Hypothesis: If `lm_head` were exactly rank-3, exact rank-3 factorization would push the baseline-family exact recipe below 197 without retuning.
+- Exact architecture/config changes: Base `Exp42`; attempt exact `FactorizedLinearExact(rank=3)` replacement for `lm_head`.
+- Explicit sharing mode: none
+- Parameter count (named_parameters): N/A (build failed before accounting; target `192`)
+- Buffer count (named_buffers): N/A
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: N/A (build failed before metadata collection)
+- Equivalence result (10k): not run (candidate build failed before equivalence)
+- Validation commands:
+  - ``python run_pivot_exp38_49.py` (candidate build/meta precheck failed before harness equivalence/structured commands were issued)`
+- Structured-suite results: not run (candidate build failed before harness validation)
+- Random results:
+  - Seed `123456789`, cases `0`: not run (not a milestone/new-best candidate after structured pass or build failed)
+- Failure mode details: Exactness assumption invalid: `lm_head` is rank-5 in float64 exact arithmetic, so exact rank-3 factorization is impossible in this batch.
+- What I learned: The planned exact `lm_head` rank-3 factorization is invalid for this repo weights: `lm_head` is rank-5 in float64 exact arithmetic despite appearing rank-3 in float32 numerical rank checks.
+- Next experiment planned: Exp45
+
+## Experiment 45 — Full Exact Recipe + Shared v_proj + lm_head Rank-3 (Baseline Family) (BUILD FAIL)
+- Timestamp (UTC): 2026-02-24T22:06:48Z
+- Candidate module: `param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline`
+- Hypothesis: Composing exact `v_proj` sharing with exact rank-3 `lm_head` factorization could push the baseline-family exact frontier lower than `Exp43` if `lm_head` rank-3 exactness holds.
+- Exact architecture/config changes: Base `Exp42`; add exact `v_proj` module aliasing plus attempted exact `lm_head` rank-3 factorization.
+- Explicit sharing mode: module aliasing (`v_proj` across layers) + attempted exact factorization
+- Parameter count (named_parameters): N/A (build failed before accounting; target `185`)
+- Buffer count (named_buffers): N/A
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: N/A (build failed before metadata collection)
+- Equivalence result (10k): not run (candidate build failed before equivalence)
+- Validation commands:
+  - ``python run_pivot_exp38_49.py` (candidate build/meta precheck failed before harness equivalence/structured commands were issued)`
+- Structured-suite results: not run (candidate build failed before harness validation)
+- Random results:
+  - Seed `123456789`, cases `0`: not run (not a milestone/new-best candidate after structured pass or build failed)
+- Failure mode details: Exactness assumption invalid: `lm_head` is rank-5 in float64 exact arithmetic, so exact rank-3 factorization is impossible in this batch.
+- What I learned: The planned exact `lm_head` rank-3 factorization is invalid for this repo weights: `lm_head` is rank-5 in float64 exact arithmetic despite appearing rank-3 in float32 numerical rank checks.
+- Next experiment planned: Exp46
+
+## Experiment 46 — Full MLX-Style Exact Recipe on Exp3 Lineage (PASS)
+- Timestamp (UTC): 2026-02-24T22:06:49Z
+- Candidate module: `param_candidate_exp46_mlx197_recipe_on_exp3`
+- Hypothesis: Stacking the MLX-style exact reparameterization recipe onto the proven `Exp3` layer0-width2 prune should yield an exact ~195-param model.
+- Exact architecture/config changes: Base `param_candidate_exp03_layer0_mlp_int2`; apply rank-1 major linears, fixed-scale RMSNorms, rank-2 embedding, and `SparseGate0ExactExp3` for the width-2 layer0 gate.
+- Explicit sharing mode: none
+- Parameter count (named_parameters): 195
+- Buffer count (named_buffers): 0
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: rank1 major linears max residual `0`; embedding rank-2 residual `0`; fixed-scale RMSNorm replacements `9` modules; sparse gate0 kind `exp3`, stored shape `(2, 3)`; lm_head rank check `rank32=3`, `rank64=5`
+- Equivalence result (10k): PASS (10,000 random cases, seed `123456789`)
+- Validation commands:
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_candidate_exp03_layer0_mlp_int2 --compare-candidate-module param_candidate_exp46_mlx197_recipe_on_exp3 --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_equiv.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp46_mlx197_recipe_on_exp3 --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 195 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_structured.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp46_mlx197_recipe_on_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 195 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc100k.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp46_mlx197_recipe_on_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 195 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc1m.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp46_mlx197_recipe_on_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 195 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp46_acc100k_seed987654321.json`
+- Structured-suite results: PASS (101123 total cases)
+- Random results:
+  - Seed `123456789`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+  - Seed `123456789`, cases `1000000`: accuracy `1.00000000` (exact `1000000`, mismatches `0`)
+  - Seed `987654321`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+- Failure mode details: N/A
+- What I learned: The MLX-style exact recipe stacks cleanly on the proven Exp3 layer0-width2 prune, reproducing an exact 195-param model.
+- Next experiment planned: Exp47
+
+## Experiment 47 — Exp3 Exact Recipe + Shared v_proj (PASS)
+- Timestamp (UTC): 2026-02-24T22:06:50Z
+- Candidate module: `param_candidate_exp47_mlx195_plus_vproj_share_exp3`
+- Hypothesis: Combining the `Exp46` exact recipe with exact `v_proj` sharing across layers should beat the 197 milestone without retuning.
+- Exact architecture/config changes: Base `Exp46`; alias factorized `v_proj` modules across layers (same module instance / shared Parameters).
+- Explicit sharing mode: module aliasing (`v_proj` across layers)
+- Parameter count (named_parameters): 188
+- Buffer count (named_buffers): 0
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: rank1 major linears max residual `0`; embedding rank-2 residual `0`; fixed-scale RMSNorm replacements `9` modules; sparse gate0 kind `exp3`, stored shape `(2, 3)`; shared_vproj identity checks `{'module_shared': True, 'pre_equal': True, 'weight_param_shared': True}`; lm_head rank check `rank32=3`, `rank64=5`
+- Equivalence result (10k): PASS (10,000 random cases, seed `123456789`)
+- Validation commands:
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --compare-reference-module param_candidate_exp03_layer0_mlp_int2 --compare-candidate-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --compare-num-tests 10000 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_equiv.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --oracle-module param_343 --structured-suite --num-tests 0 --expected-param-count 188 --batch-size 4096 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_structured.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 188 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc100k.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 1000000 --min-random-accuracy 0.99 --expected-param-count 188 --batch-size 4096 --golden-seed 123456789 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc1m.json`
+  - `conda run -n param343-addition-wsl python /home/khaled/03f119dcfc4b8351855c00b1c5224b58/test_param_343.py --model-module param_candidate_exp47_mlx195_plus_vproj_share_exp3 --oracle-module param_343 --num-tests 0 --random-accuracy-num-tests 100000 --min-random-accuracy 0.99 --expected-param-count 188 --batch-size 4096 --golden-seed 987654321 --failure-dump /home/khaled/03f119dcfc4b8351855c00b1c5224b58/artifacts/exp47_acc100k_seed987654321.json`
+- Structured-suite results: PASS (101123 total cases)
+- Random results:
+  - Seed `123456789`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+  - Seed `123456789`, cases `1000000`: accuracy `1.00000000` (exact `1000000`, mismatches `0`)
+  - Seed `987654321`, cases `100000`: accuracy `1.00000000` (exact `100000`, mismatches `0`)
+- Failure mode details: N/A
+- What I learned: Stacking `v_proj` sharing on the Exp3 exact recipe gives the strongest exact no-retune result in this batch (188 params), beating the 197 reproduction and our previous 323 frontier by a large margin.
+- Next experiment planned: Exp48
+
+## Experiment 48 — Exp3 Exact Recipe + lm_head Rank-3 Factorization (BUILD FAIL)
+- Timestamp (UTC): 2026-02-24T22:06:51Z
+- Candidate module: `param_candidate_exp48_mlx195_plus_lmhead_r3_exp3`
+- Hypothesis: If `lm_head` were exactly rank-3 on the Exp3 lineage, exact factorization would reduce the count further without affecting behavior.
+- Exact architecture/config changes: Base `Exp46`; attempt exact `FactorizedLinearExact(rank=3)` replacement for `lm_head`.
+- Explicit sharing mode: none
+- Parameter count (named_parameters): N/A (build failed before accounting; target `190`)
+- Buffer count (named_buffers): N/A
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: N/A (build failed before metadata collection)
+- Equivalence result (10k): not run (candidate build failed before equivalence)
+- Validation commands:
+  - ``python run_pivot_exp38_49.py` (candidate build/meta precheck failed before harness equivalence/structured commands were issued)`
+- Structured-suite results: not run (candidate build failed before harness validation)
+- Random results:
+  - Seed `123456789`, cases `0`: not run (not a milestone/new-best candidate after structured pass or build failed)
+- Failure mode details: Exactness assumption invalid: `lm_head` is rank-5 in float64 exact arithmetic, so exact rank-3 factorization is impossible in this batch.
+- What I learned: The planned exact `lm_head` rank-3 factorization is invalid for this repo weights: `lm_head` is rank-5 in float64 exact arithmetic despite appearing rank-3 in float32 numerical rank checks.
+- Next experiment planned: Exp49
+
+## Experiment 49 — Exp3 Exact Recipe + Shared v_proj + lm_head Rank-3 (BUILD FAIL)
+- Timestamp (UTC): 2026-02-24T22:06:52Z
+- Candidate module: `param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3`
+- Hypothesis: Composing `Exp47` with exact rank-3 `lm_head` factorization would provide the strongest no-retune exact point if `lm_head` rank-3 exactness held.
+- Exact architecture/config changes: Base `Exp46`; add exact `v_proj` aliasing plus attempted exact `lm_head` rank-3 factorization.
+- Explicit sharing mode: module aliasing (`v_proj` across layers) + attempted exact factorization
+- Parameter count (named_parameters): N/A (build failed before accounting; target `183`)
+- Buffer count (named_buffers): N/A
+- Encoding changed: no
+- Harness version/status: Patched `test_param_343.py` candidate/oracle path (unchanged in this batch); validations executed via `python run_pivot_exp38_49.py` orchestrating harness CLI calls.
+- Decomposition residual checks: N/A (build failed before metadata collection)
+- Equivalence result (10k): not run (candidate build failed before equivalence)
+- Validation commands:
+  - ``python run_pivot_exp38_49.py` (candidate build/meta precheck failed before harness equivalence/structured commands were issued)`
+- Structured-suite results: not run (candidate build failed before harness validation)
+- Random results:
+  - Seed `123456789`, cases `0`: not run (not a milestone/new-best candidate after structured pass or build failed)
+- Failure mode details: Exactness assumption invalid: `lm_head` is rank-5 in float64 exact arithmetic, so exact rank-3 factorization is impossible in this batch.
+- What I learned: The planned exact `lm_head` rank-3 factorization is invalid for this repo weights: `lm_head` is rank-5 in float64 exact arithmetic despite appearing rank-3 in float32 numerical rank checks.
+- Next experiment planned: Next batch: exact lm_head alternatives (rank-5 exact factorization or approximate+retune) and additional exact sharing opportunities
