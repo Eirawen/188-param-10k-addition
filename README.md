@@ -100,8 +100,7 @@ This matters because `param_188.py` uses exact cross-layer sharing for `v_proj`.
 - The shared `v_proj` is counted once (legit weight tying / parameter sharing)
 - This is a count of unique trainable tensors, not “untied per-layer slots”
 
-## Key Experiment Lessons (Frontier Map)
-
+## Key Experiment Lessons 
 The experiment log (`EXPERIMENT_LOG.md`) documents the full search. The main lessons:
 
 - Naive destructive ablations hit real mechanistic boundaries quickly.
