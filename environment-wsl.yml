@@ -1,0 +1,10 @@
+name: param343-addition-wsl
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - numpy
+  - pytorch
+  - pip
+  # CPU PyTorch environment for WSL/Linux.
