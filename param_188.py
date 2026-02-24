@@ -14,6 +14,11 @@ model that is reconstructed locally in this file):
 This file preserves the same harness contract as `param_343.py`.
 """
 
+
+"""
+Special thanks to @N8programs and @xangma for their work which facilitated this.
+"""
+
 import argparse
 import itertools
 import math

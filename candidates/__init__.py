@@ -1,0 +1,1 @@
+"""Candidate compression frontier modules."""

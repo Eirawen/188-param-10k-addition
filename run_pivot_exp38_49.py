@@ -32,18 +32,18 @@ class Exp:
     milestone: bool = False
 
 EXPS = [
-    Exp(38, "param_candidate_exp38_rank1_major_linears_baseline", "baseline", 259, "param_343"),
-    Exp(39, "param_candidate_exp39_fixedscale_rmsnorms_baseline", "baseline", 310, "param_343"),
-    Exp(40, "param_candidate_exp40_factored_embedding_baseline", "baseline", 323, "param_343"),
-    Exp(41, "param_candidate_exp41_sparse_gate0_baseline", "baseline", 334, "param_343"),
-    Exp(42, "param_candidate_exp42_mlx197_repro_baseline", "baseline", 197, "param_343", milestone=True),
-    Exp(43, "param_candidate_exp43_mlx197_plus_vproj_share_baseline", "baseline", 190, "param_343"),
-    Exp(44, "param_candidate_exp44_mlx197_plus_lmhead_r3_baseline", "baseline", 192, "param_343"),
-    Exp(45, "param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline", "baseline", 185, "param_343", milestone=True),
-    Exp(46, "param_candidate_exp46_mlx197_recipe_on_exp3", "exp3", 195, "param_candidate_exp03_layer0_mlp_int2", milestone=True),
-    Exp(47, "param_candidate_exp47_mlx195_plus_vproj_share_exp3", "exp3", 188, "param_candidate_exp03_layer0_mlp_int2"),
-    Exp(48, "param_candidate_exp48_mlx195_plus_lmhead_r3_exp3", "exp3", 190, "param_candidate_exp03_layer0_mlp_int2"),
-    Exp(49, "param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3", "exp3", 183, "param_candidate_exp03_layer0_mlp_int2", milestone=True),
+    Exp(38, "candidates.param_candidate_exp38_rank1_major_linears_baseline", "baseline", 259, "param_343"),
+    Exp(39, "candidates.param_candidate_exp39_fixedscale_rmsnorms_baseline", "baseline", 310, "param_343"),
+    Exp(40, "candidates.param_candidate_exp40_factored_embedding_baseline", "baseline", 323, "param_343"),
+    Exp(41, "candidates.param_candidate_exp41_sparse_gate0_baseline", "baseline", 334, "param_343"),
+    Exp(42, "candidates.param_candidate_exp42_mlx197_repro_baseline", "baseline", 197, "param_343", milestone=True),
+    Exp(43, "candidates.param_candidate_exp43_mlx197_plus_vproj_share_baseline", "baseline", 190, "param_343"),
+    Exp(44, "candidates.param_candidate_exp44_mlx197_plus_lmhead_r3_baseline", "baseline", 192, "param_343"),
+    Exp(45, "candidates.param_candidate_exp45_mlx197_plus_vprojshare_lmheadr3_baseline", "baseline", 185, "param_343", milestone=True),
+    Exp(46, "candidates.param_candidate_exp46_mlx197_recipe_on_exp3", "exp3", 195, "candidates.param_candidate_exp03_layer0_mlp_int2", milestone=True),
+    Exp(47, "candidates.param_candidate_exp47_mlx195_plus_vproj_share_exp3", "exp3", 188, "candidates.param_candidate_exp03_layer0_mlp_int2"),
+    Exp(48, "candidates.param_candidate_exp48_mlx195_plus_lmhead_r3_exp3", "exp3", 190, "candidates.param_candidate_exp03_layer0_mlp_int2"),
+    Exp(49, "candidates.param_candidate_exp49_mlx195_plus_vprojshare_lmheadr3_exp3", "exp3", 183, "candidates.param_candidate_exp03_layer0_mlp_int2", milestone=True),
 ]
 
 
