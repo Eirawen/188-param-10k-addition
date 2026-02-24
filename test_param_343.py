@@ -87,7 +87,7 @@ def _dump_failure(path: str | None, payload: dict) -> None:
 
 
 def _build_failure_payload(
-    p343,
+    candidate_mod,
     model,
     *,
     suite: str,
@@ -107,21 +107,21 @@ def _build_failure_payload(
         "b": f"{b:010d}",
         "expected": expected,
         "got": got,
-        "input_tokens": p343._encode_addends_internal(a, b),
+        "input_tokens": candidate_mod._encode_addends_internal(a, b),
     }
     if include_argmax_trace:
-        payload["argmax_trace"] = _compute_argmax_trace(p343, model, a, b)
+        payload["argmax_trace"] = _compute_argmax_trace(candidate_mod, model, a, b)
     return payload
 
 
-def _compute_argmax_trace(p343, model, a: int, b: int) -> list[dict]:
+def _compute_argmax_trace(candidate_mod, model, a: int, b: int) -> list[dict]:
     # Optional debug trace for deterministic failure reproduction.
     torch = importlib.import_module("torch")
-    seq = list(p343._encode_addends_internal(a, b))
+    seq = list(candidate_mod._encode_addends_internal(a, b))
     trace: list[dict] = []
     model.eval()
     with torch.no_grad():
-        for step in range(p343.OUTPUT_DIGITS):
+        for step in range(candidate_mod.OUTPUT_DIGITS):
             x = torch.tensor([seq], dtype=torch.long)
             logits = model(x)
             last = logits[0, -1, :]
@@ -288,7 +288,8 @@ def _low_digits_exhaustive_examples(num_digits: int) -> Iterator[tuple[int, int]
 
 
 def _run_named_case_stream(
-    p343,
+    oracle_mod,
+    candidate_mod,
     name: str,
     model,
     cases: Iterable[tuple[int, int]],
@@ -301,14 +302,14 @@ def _run_named_case_stream(
 ) -> int:
     total = 0
     for batch in _chunked(cases, batch_size):
-        expected = [p343._expected_output(a, b) for a, b in batch]
-        actual = p343._generate_output_batch(model, batch)
+        expected = [oracle_mod._expected_output(a, b) for a, b in batch]
+        actual = candidate_mod._generate_output_batch(model, batch)
         for i, ((a, b), exp, act) in enumerate(zip(batch, expected, actual)):
             if act != exp:
                 _dump_failure(
                     failure_dump_path,
                     _build_failure_payload(
-                        p343,
+                        candidate_mod,
                         model,
                         suite=name,
                         case_index=case_index_start + total + i,
@@ -329,7 +330,8 @@ def _run_named_case_stream(
 
 
 def run_structured_test_suite(
-    p343,
+    oracle_mod,
+    candidate_mod,
     model,
     batch_size: int,
     exhaustive_low_digits: int,
@@ -340,7 +342,8 @@ def run_structured_test_suite(
 ) -> None:
     total = 0
     total += _run_named_case_stream(
-        p343,
+        oracle_mod,
+        candidate_mod,
         "smoke",
         model,
         _single_case_examples(),
@@ -351,7 +354,8 @@ def run_structured_test_suite(
         case_index_start=total,
     )
     total += _run_named_case_stream(
-        p343,
+        oracle_mod,
+        candidate_mod,
         "power-boundaries",
         model,
         _power_boundary_examples(),
@@ -362,7 +366,8 @@ def run_structured_test_suite(
         case_index_start=total,
     )
     total += _run_named_case_stream(
-        p343,
+        oracle_mod,
+        candidate_mod,
         "carry-chains",
         model,
         _carry_chain_examples(),
@@ -373,7 +378,8 @@ def run_structured_test_suite(
         case_index_start=total,
     )
     total += _run_named_case_stream(
-        p343,
+        oracle_mod,
+        candidate_mod,
         "position-digit-sweep",
         model,
         _position_digit_sweep_examples(),
@@ -384,7 +390,8 @@ def run_structured_test_suite(
         case_index_start=total,
     )
     total += _run_named_case_stream(
-        p343,
+        oracle_mod,
+        candidate_mod,
         "no-carry-random",
         model,
         _no_carry_random_examples(50_000, 101),
@@ -395,7 +402,8 @@ def run_structured_test_suite(
         case_index_start=total,
     )
     total += _run_named_case_stream(
-        p343,
+        oracle_mod,
+        candidate_mod,
         "heavy-carry-random",
         model,
         _heavy_carry_random_examples(50_000, 202),
@@ -407,7 +415,8 @@ def run_structured_test_suite(
     )
     if exhaustive_low_digits > 0:
         total += _run_named_case_stream(
-            p343,
+            oracle_mod,
+            candidate_mod,
             f"exhaustive-low-{exhaustive_low_digits}-digits",
             model,
             _low_digits_exhaustive_examples(exhaustive_low_digits),
@@ -421,7 +430,8 @@ def run_structured_test_suite(
 
 
 def run_random_test_batched(
-    p343,
+    oracle_mod,
+    candidate_mod,
     model,
     *,
     num_tests: int,
@@ -432,14 +442,14 @@ def run_random_test_batched(
 ) -> None:
     tested = 0
     for batch in _chunked(_iter_random_examples(num_tests, seed), batch_size):
-        expected = [p343._expected_output(a, b) for a, b in batch]
-        actual = p343._generate_output_batch(model, batch)
+        expected = [oracle_mod._expected_output(a, b) for a, b in batch]
+        actual = candidate_mod._generate_output_batch(model, batch)
         for i, ((a, b), exp, act) in enumerate(zip(batch, expected, actual)):
             if act != exp:
                 _dump_failure(
                     failure_dump_path,
                     _build_failure_payload(
-                        p343,
+                        candidate_mod,
                         model,
                         suite="random-self-test",
                         case_index=tested + i,
@@ -457,6 +467,84 @@ def run_random_test_batched(
                 )
         tested += len(batch)
         print(f"self-test progress: {tested}/{num_tests}")
+
+
+def run_random_accuracy_batched(
+    oracle_mod,
+    candidate_mod,
+    model,
+    *,
+    num_tests: int,
+    batch_size: int,
+    seed: int,
+    failure_dump_path: str | None,
+    include_argmax_trace: bool,
+    min_accuracy: float | None,
+    max_recorded_failures: int,
+    progress_every: int,
+) -> float:
+    tested = 0
+    mismatches = 0
+    recorded_failures: list[dict] = []
+    next_progress = progress_every if progress_every > 0 else None
+
+    for batch in _chunked(_iter_random_examples(num_tests, seed), batch_size):
+        expected = [oracle_mod._expected_output(a, b) for a, b in batch]
+        actual = candidate_mod._generate_output_batch(model, batch)
+        for i, ((a, b), exp, act) in enumerate(zip(batch, expected, actual)):
+            if act != exp:
+                mismatches += 1
+                if len(recorded_failures) < max_recorded_failures:
+                    failure = {
+                        "case_index": tested + i,
+                        "a": f"{a:010d}",
+                        "b": f"{b:010d}",
+                        "expected": exp,
+                        "got": act,
+                        "input_tokens": candidate_mod._encode_addends_internal(a, b),
+                    }
+                    if include_argmax_trace:
+                        failure["argmax_trace"] = _compute_argmax_trace(candidate_mod, model, a, b)
+                    recorded_failures.append(failure)
+        tested += len(batch)
+        if progress_every <= 0:
+            print(f"accuracy progress: {tested}/{num_tests}")
+        else:
+            while next_progress is not None and tested >= next_progress:
+                print(f"accuracy progress: {tested}/{num_tests}")
+                next_progress += progress_every
+
+    exact = tested - mismatches
+    accuracy = (exact / tested) if tested else 1.0
+    print(
+        f"random accuracy: exact={exact}, mismatches={mismatches}, total={tested}, "
+        f"accuracy={accuracy:.8f}, seed={seed}"
+    )
+    if recorded_failures:
+        print(f"recorded failures shown: {len(recorded_failures)} (max {max_recorded_failures})")
+        for row in recorded_failures[: min(3, len(recorded_failures))]:
+            print(
+                "  mismatch case "
+                f"{row['case_index']} a={row['a']} b={row['b']} expected={row['expected']} got={row['got']}"
+            )
+        if failure_dump_path:
+            _dump_failure(
+                failure_dump_path,
+                {
+                    "suite": "random-accuracy",
+                    "seed": seed,
+                    "num_tests": tested,
+                    "exact": exact,
+                    "mismatches": mismatches,
+                    "accuracy": accuracy,
+                    "recorded_failures": recorded_failures,
+                },
+            )
+    if min_accuracy is not None and accuracy < min_accuracy:
+        raise AssertionError(
+            f"Random accuracy below threshold: required {min_accuracy:.8f}, got {accuracy:.8f}"
+        )
+    return accuracy
 
 
 def compare_modules_equivalence(
@@ -512,6 +600,30 @@ def compare_modules_equivalence(
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--num-tests", type=int, default=8192)
+    parser.add_argument(
+        "--random-accuracy-num-tests",
+        type=int,
+        default=0,
+        help="Counted random exact-match evaluation (continues past mismatches).",
+    )
+    parser.add_argument(
+        "--min-random-accuracy",
+        type=float,
+        default=None,
+        help="Optional minimum exact-match accuracy threshold for --random-accuracy-num-tests.",
+    )
+    parser.add_argument(
+        "--max-recorded-failures",
+        type=int,
+        default=10,
+        help="Max mismatches to retain in memory / failure dump for random accuracy mode.",
+    )
+    parser.add_argument(
+        "--random-accuracy-progress-every",
+        type=int,
+        default=100_000,
+        help="Progress interval for random accuracy mode (<=0 prints once per batch).",
+    )
     parser.add_argument("--batch-size", type=int, default=1024)
     parser.add_argument("--golden-seed", type=int, default=DEFAULT_GOLDEN_SEED)
     parser.add_argument("--structured-suite", action="store_true")
@@ -526,6 +638,18 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--include-argmax-trace", action="store_true")
     parser.add_argument("--expected-param-count", type=int, default=DEFAULT_EXPECTED_PARAM_COUNT)
     parser.add_argument("--skip-param-check", action="store_true")
+    parser.add_argument(
+        "--model-module",
+        type=str,
+        default="param_343",
+        help="Module name used to build the model and generate outputs.",
+    )
+    parser.add_argument(
+        "--oracle-module",
+        type=str,
+        default="param_343",
+        help="Module name used for arithmetic expected outputs (anti-cheating oracle).",
+    )
     parser.add_argument("--compare-reference-module", type=str, default=None)
     parser.add_argument(
         "--compare-candidate-module",
@@ -548,12 +672,18 @@ def main() -> None:
         raise ValueError("--batch-size must be > 0")
     if args.num_tests < 0:
         raise ValueError("--num-tests must be >= 0")
+    if args.random_accuracy_num_tests < 0:
+        raise ValueError("--random-accuracy-num-tests must be >= 0")
     if args.compare_num_tests < 0:
         raise ValueError("--compare-num-tests must be >= 0")
     if args.exhaustive_low_digits < 0 or args.exhaustive_low_digits > 4:
         raise ValueError("--exhaustive-low-digits must be in [0, 4]")
     if args.dataset_size < 0:
         raise ValueError("--dataset-size must be >= 0")
+    if args.max_recorded_failures < 0:
+        raise ValueError("--max-recorded-failures must be >= 0")
+    if args.min_random_accuracy is not None and not (0.0 <= args.min_random_accuracy <= 1.0):
+        raise ValueError("--min-random-accuracy must be in [0, 1]")
 
     if args.write_dataset:
         if args.dataset_size <= 0:
@@ -583,15 +713,21 @@ def main() -> None:
             )
         return
 
-    p343 = _load_param_343()
-    model = p343.build_magic_model()
+    oracle_mod = _load_module(args.oracle_module)
+    candidate_mod = _load_module(args.model_module)
+    model = candidate_mod.build_magic_model()
     if args.skip_param_check:
-        print(f"parameter count (module helper): {p343.count_parameters(model.parameters())}")
+        if hasattr(candidate_mod, "count_parameters"):
+            print(f"parameter count (module helper): {candidate_mod.count_parameters(model.parameters())}")
+        else:
+            print("candidate module has no count_parameters(); falling back to named_parameters accounting")
+            enforce_param_accounting(model, expected_param_count=None)
     else:
         enforce_param_accounting(model, expected_param_count=args.expected_param_count)
     if args.structured_suite:
         run_structured_test_suite(
-            p343,
+            oracle_mod,
+            candidate_mod,
             model,
             args.batch_size,
             args.exhaustive_low_digits,
@@ -601,7 +737,8 @@ def main() -> None:
         )
     if args.num_tests > 0:
         run_random_test_batched(
-            p343,
+            oracle_mod,
+            candidate_mod,
             model,
             num_tests=args.num_tests,
             batch_size=args.batch_size,
@@ -612,6 +749,20 @@ def main() -> None:
         print(
             f"self-test passed ({args.num_tests} random cases, batch size {args.batch_size}, "
             f"seed {args.golden_seed})"
+        )
+    if args.random_accuracy_num_tests > 0:
+        run_random_accuracy_batched(
+            oracle_mod,
+            candidate_mod,
+            model,
+            num_tests=args.random_accuracy_num_tests,
+            batch_size=args.batch_size,
+            seed=args.golden_seed,
+            failure_dump_path=args.failure_dump,
+            include_argmax_trace=args.include_argmax_trace,
+            min_accuracy=args.min_random_accuracy,
+            max_recorded_failures=args.max_recorded_failures,
+            progress_every=args.random_accuracy_progress_every,
         )
 
 
